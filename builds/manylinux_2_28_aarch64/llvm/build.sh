@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# Build LLVM 21.1.0 from source for manylinux_2_28_aarch64.
+# Build LLVM 21.1.8 from source for manylinux_2_28_aarch64.
 # Installs to /opt/llvm.
 set -euo pipefail
 
-LLVM_VERSION="21.1.0"
+LLVM_VERSION="21.1.8"
 LLVM_TAG="llvmorg-${LLVM_VERSION}"
 INSTALL_PREFIX="/opt/llvm"
 BUILD_DIR="/tmp/llvm-build"
 TARBALL="llvm-project-${LLVM_VERSION}.src.tar.xz"
 
 echo "=== Installing build dependencies ==="
-dnf install -y cmake ninja-build python3 python3-devel gcc gcc-c++ make xz
+dnf install -y cmake python3 python3-devel gcc gcc-c++ make xz
 
 echo "=== Downloading LLVM ${LLVM_VERSION} source ==="
 mkdir -p "${BUILD_DIR}"
@@ -32,7 +32,6 @@ mkdir -p "${BUILD_DIR}/build"
 cmake \
     -S "${BUILD_DIR}/${SOURCE_DIR}/llvm" \
     -B "${BUILD_DIR}/build" \
-    -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}" \
     -DLLVM_ENABLE_PROJECTS="clang;lld" \
@@ -47,6 +46,6 @@ cmake \
     -DLLVM_ENABLE_LIBXML2=OFF
 
 echo "=== Building and installing LLVM (this may take a while) ==="
-cmake --build "${BUILD_DIR}/build" --target install -- -j"$(nproc)"
+cmake --build "${BUILD_DIR}/build" --target install --parallel "$(nproc)"
 
 echo "=== LLVM ${LLVM_VERSION} installed to ${INSTALL_PREFIX} ==="

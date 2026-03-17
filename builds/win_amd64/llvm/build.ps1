@@ -1,10 +1,10 @@
-# Build LLVM 21.1.0 from source for win_amd64.
+# Build LLVM 21.1.8 from source for win_amd64.
 # Installs to C:\hugrverse\llvm.
 [CmdletBinding()]
 param()
 $ErrorActionPreference = "Stop"
 
-$LlvmVersion = "21.1.0"
+$LlvmVersion = "21.1.8"
 $LlvmTag = "llvmorg-$LlvmVersion"
 $InstallPrefix = "C:\hugrverse\llvm"
 $BuildDir = "C:\Temp\llvm-build"
@@ -53,7 +53,7 @@ cmake `
     -DLLVM_INCLUDE_EXAMPLES=OFF `
     -DLLVM_INCLUDE_BENCHMARKS=OFF `
     -DLLVM_ENABLE_ASSERTIONS=OFF `
-    -DLLVM_ENABLE_ZLIB=FORCE_ON `
+    -DLLVM_ENABLE_ZLIB=OFF `
     -DLLVM_ENABLE_ZSTD=OFF `
     -DLLVM_ENABLE_LIBXML2=OFF
 
