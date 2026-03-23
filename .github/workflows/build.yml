@@ -1,0 +1,181 @@
+name: Build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  release:
+    types: [published]
+  workflow_dispatch:
+
+# Minimal permissions at workflow level; jobs that upload to a release use
+# contents:write (needed by `gh release upload`).
+permissions:
+  contents: read
+
+# Builds for each platform run in parallel. On a release event the resulting
+# archive is also uploaded to the GitHub release.
+jobs:
+  # ── manylinux_2_28_x86_64 ───────────────────────────────────────────────────
+  build-manylinux-x86_64:
+    name: manylinux_2_28_x86_64
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build inside manylinux_2_28_x86_64 container
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/host" \
+            quay.io/pypa/manylinux_2_28_x86_64 \
+            /bin/bash /host/builds/manylinux_2_28_x86_64/build.sh \
+              /host/hugrverse_env_manylinux_2_28_x86_64.tar.gz
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hugrverse_env_manylinux_2_28_x86_64
+          path: hugrverse_env_manylinux_2_28_x86_64.tar.gz
+
+      - name: Upload to release
+        if: github.event_name == 'release'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ github.event.release.tag_name }}" \
+            hugrverse_env_manylinux_2_28_x86_64.tar.gz \
+            --clobber
+
+  # ── manylinux_2_28_aarch64 ──────────────────────────────────────────────────
+  build-manylinux-aarch64:
+    name: manylinux_2_28_aarch64
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 360
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build inside manylinux_2_28_aarch64 container
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/host" \
+            quay.io/pypa/manylinux_2_28_aarch64 \
+            /bin/bash /host/builds/manylinux_2_28_aarch64/build.sh \
+              /host/hugrverse_env_manylinux_2_28_aarch64.tar.gz
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hugrverse_env_manylinux_2_28_aarch64
+          path: hugrverse_env_manylinux_2_28_aarch64.tar.gz
+
+      - name: Upload to release
+        if: github.event_name == 'release'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ github.event.release.tag_name }}" \
+            hugrverse_env_manylinux_2_28_aarch64.tar.gz \
+            --clobber
+
+  # ── macosx_15_0_arm64 ───────────────────────────────────────────────────────
+  build-macos-arm64:
+    name: macosx_15_0_arm64
+    runs-on: macos-15
+    timeout-minutes: 360
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          bash builds/macosx_15_0_arm64/build.sh \
+            "${{ github.workspace }}/hugrverse_env_macosx_15_0_arm64.tar.gz"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hugrverse_env_macosx_15_0_arm64
+          path: hugrverse_env_macosx_15_0_arm64.tar.gz
+
+      - name: Upload to release
+        if: github.event_name == 'release'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ github.event.release.tag_name }}" \
+            hugrverse_env_macosx_15_0_arm64.tar.gz \
+            --clobber
+
+  # ── macosx_15_0_x86_64 ──────────────────────────────────────────────────────
+  build-macos-x86_64:
+    name: macosx_15_0_x86_64
+    runs-on: macos-15-intel
+    timeout-minutes: 360
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          bash builds/macosx_15_0_x86_64/build.sh \
+            "${{ github.workspace }}/hugrverse_env_macosx_15_0_x86_64.tar.gz"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hugrverse_env_macosx_15_0_x86_64
+          path: hugrverse_env_macosx_15_0_x86_64.tar.gz
+
+      - name: Upload to release
+        if: github.event_name == 'release'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ github.event.release.tag_name }}" \
+            hugrverse_env_macosx_15_0_x86_64.tar.gz \
+            --clobber
+
+  # ── win_amd64 ───────────────────────────────────────────────────────────────
+  build-windows:
+    name: win_amd64
+    runs-on: windows-latest
+    timeout-minutes: 360
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64
+
+      - name: Build
+        shell: pwsh
+        run: |
+          .\builds\win_amd64\build.ps1 `
+            -OutputPath "${{ github.workspace }}\hugrverse_env_win_amd64.zip"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hugrverse_env_win_amd64
+          path: hugrverse_env_win_amd64.zip
+
+      - name: Upload to release
+        if: github.event_name == 'release'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ github.event.release.tag_name }}" `
+            hugrverse_env_win_amd64.zip `
+            --clobber
+        shell: pwsh
