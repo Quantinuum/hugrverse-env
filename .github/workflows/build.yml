@@ -27,7 +27,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore cached build
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: hugrverse_env_manylinux_2_28_x86_64.tar.gz
+          key: manylinux_2_28_x86_64-${{ hashFiles('builds/manylinux_2_28_x86_64/**') }}
+
       - name: Build inside manylinux_2_28_x86_64 container
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/host" \
@@ -60,7 +68,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore cached build
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: hugrverse_env_manylinux_2_28_aarch64.tar.gz
+          key: manylinux_2_28_aarch64-${{ hashFiles('builds/manylinux_2_28_aarch64/**') }}
+
       - name: Build inside manylinux_2_28_aarch64 container
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/host" \
@@ -93,7 +109,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore cached build
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: hugrverse_env_macosx_15_0_arm64.tar.gz
+          key: macosx_15_0_arm64-${{ hashFiles('builds/macosx_15_0_arm64/**') }}
+
       - name: Build
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           bash builds/macosx_15_0_arm64/build.sh \
             "${{ github.workspace }}/hugrverse_env_macosx_15_0_arm64.tar.gz"
@@ -123,7 +147,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore cached build
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: hugrverse_env_macosx_15_0_x86_64.tar.gz
+          key: macosx_15_0_x86_64-${{ hashFiles('builds/macosx_15_0_x86_64/**') }}
+
       - name: Build
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           bash builds/macosx_15_0_x86_64/build.sh \
             "${{ github.workspace }}/hugrverse_env_macosx_15_0_x86_64.tar.gz"
@@ -153,12 +185,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore cached build
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: hugrverse_env_win_amd64.zip
+          key: win_amd64-${{ hashFiles('builds/win_amd64/**') }}
+
       - name: Set up MSVC environment
+        if: steps.cache.outputs.cache-hit != 'true'
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: amd64
 
       - name: Build
+        if: steps.cache.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
           .\builds\win_amd64\build.ps1 `
