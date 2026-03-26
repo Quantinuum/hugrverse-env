@@ -7,7 +7,6 @@ on:
       - main
   workflow_dispatch:
 
-# Builds for each platform run in parallel.
 jobs:
   build:
     strategy:
@@ -53,7 +52,7 @@ jobs:
           key: ${{ matrix.dependency }}-${{ matrix.platform.name }}-${{ hashFiles(format('deps/{0}/{1}.sh', matrix.dependency, matrix.platform.name)) }}
 
       - name: Build inside container
-        if: startsWith(matrix.platform.name, 'manylinux_') && steps.cache.outputs.cache-hit != 'true'
+        if: ${{ startsWith(matrix.platform.name, 'manylinux_') && steps.cache.outputs.cache-hit != 'true' }}
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/host" \
@@ -63,7 +62,7 @@ jobs:
               "/host/hugrenv-${{ matrix.dependency }}-${{ matrix.platform.name }}.tar.gz"
 
       - name: Build natively
-        if: !startsWith(matrix.platform.name, 'manylinux_') && steps.cache.outputs.cache-hit != 'true'
+        if: ${{ !startsWith(matrix.platform.name, 'manylinux_') && steps.cache.outputs.cache-hit != 'true' }}
         run: |
           bash \
             "deps/${{ matrix.dependency }}/${{ matrix.platform.name }}.sh" \
