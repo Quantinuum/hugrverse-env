@@ -25,7 +25,8 @@ echo "::endgroup::"
 
 echo "::group::Extracting source"
     if [ ! -d "${SOURCE_DIR}" ]; then
-        tar xf "${SOURCE_TARBALL}"
+        # use windows tar instead of tar from msys2 to avoid issues with symlinks
+        command /c/Windows/System32/tar.exe -xf "${SOURCE_TARBALL}"
     fi
 echo "::endgroup::"
 

@@ -12,7 +12,7 @@ SRC_DIR=/opt/sources
 INSTALL_DIR=/opt/hugrverse
 OUTPUT_TARBALL="$1"
 
-CMAKE_BUILD_PARALLEL_LEVEL="$(nproc)"
+CMAKE_BUILD_PARALLEL_LEVEL="$(sysctl -n hw.logicalcpu)"
 export CMAKE_BUILD_PARALLEL_LEVEL
 
 mkdir -p ${SRC_DIR}
