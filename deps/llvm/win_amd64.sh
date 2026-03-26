@@ -54,7 +54,7 @@ echo "::group::Building and installing LLVM (this may take a while)"
 echo "::endgroup::"
 
 
-echo "::group::Compressing LLVM installation to output tarball"
+echo "::group::Compressing LLVM installation at '${INSTALL_PREFIX}' to output tarball '${OUTPUT_TARBALL}'"
     # use windows tar instead of tar from msys2 to avoid issues with windows drive paths
     command /c/Windows/System32/tar.exe -czvf "${OUTPUT_TARBALL}" "${INSTALL_PREFIX}"
 echo "::endgroup::"
