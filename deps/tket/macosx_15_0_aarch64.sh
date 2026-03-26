@@ -9,14 +9,14 @@ TAG_CATCH2="3.13.0"
 TAG_GMP="6.3.0"
 
 SRC_DIR=/opt/sources
-INSTALL_DIR=/opt/hugrverse
+INSTALL_PREFIX=/opt/hugrverse
 OUTPUT_TARBALL="$1"
 
 CMAKE_BUILD_PARALLEL_LEVEL="$(sysctl -n hw.logicalcpu)"
 export CMAKE_BUILD_PARALLEL_LEVEL
 
 mkdir -p ${SRC_DIR}
-mkdir -p ${INSTALL_DIR}
+mkdir -p ${INSTALL_PREFIX}
 
 echo "::group::Downloading Sources"
 
@@ -71,8 +71,8 @@ echo "::group::Installing Dependencies"
         mkdir build
         cd build
         cmake \
-            -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
-            -DCMAKE_PREFIX_PATH=${INSTALL_DIR} \
+            -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+            -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             ..
         cmake --build .
         cmake --install .
@@ -80,7 +80,7 @@ echo "::group::Installing Dependencies"
 
     echo "::group::gmp"
         cd ${SRC_DIR}/gmp
-        ./configure --prefix=${INSTALL_DIR} --enable-cxx=yes
+        ./configure --prefix=${INSTALL_PREFIX} --enable-cxx=yes
         make -j$(nproc)
         make install
     echo "::endgroup::"
@@ -91,8 +91,8 @@ echo "::group::Installing Dependencies"
         mkdir build
         cd build
         cmake \
-            -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
-            -DCMAKE_PREFIX_PATH=${INSTALL_DIR} \
+            -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+            -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DBUILD_TESTS=OFF \
             -DBUILD_BENCHMARKS=OFF \
             -DWITH_SYMENGINE_THREAD_SAFE=ON \
@@ -106,8 +106,8 @@ echo "::group::Installing Dependencies"
         mkdir build
         cd build
         cmake \
-            -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
-            -DCMAKE_PREFIX_PATH=${INSTALL_DIR} \
+            -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+            -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             ..
         cmake --build .
         cmake --install .
@@ -118,8 +118,8 @@ echo "::group::Installing Dependencies"
         mkdir build
         cd build
         cmake \
-            -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
-            -DCMAKE_PREFIX_PATH=${INSTALL_DIR} \
+            -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+            -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DJSON_BuildTests=OFF \
             ..
         cmake --build .
@@ -131,8 +131,8 @@ echo "::group::Installing Dependencies"
         mkdir build
         cd build
         cmake \
-            -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
-            -DCMAKE_PREFIX_PATH=${INSTALL_DIR} \
+            -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+            -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             ..
         cmake --build .
         cmake --install .
@@ -148,8 +148,8 @@ echo "::group::Installing tket and tket-c-api ===="
         mkdir build
         cd build
         cmake \
-            -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
-            -DCMAKE_PREFIX_PATH=${INSTALL_DIR} \
+            -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+            -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
@@ -162,8 +162,8 @@ echo "::group::Installing tket and tket-c-api ===="
         mkdir build
         cd build
         cmake \
-            -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
-            -DCMAKE_PREFIX_PATH=${INSTALL_DIR} \
+            -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+            -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
@@ -176,8 +176,8 @@ echo "::group::Installing tket and tket-c-api ===="
         mkdir build
         cd build
         cmake \
-            -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
-            -DCMAKE_PREFIX_PATH=${INSTALL_DIR} \
+            -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+            -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
@@ -190,8 +190,8 @@ echo "::group::Installing tket and tket-c-api ===="
         mkdir build
         cd build
         cmake \
-            -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
-            -DCMAKE_PREFIX_PATH=${INSTALL_DIR} \
+            -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+            -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
@@ -204,8 +204,8 @@ echo "::group::Installing tket and tket-c-api ===="
         mkdir build
         cd build
         cmake \
-            -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
-            -DCMAKE_PREFIX_PATH=${INSTALL_DIR} \
+            -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+            -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
@@ -218,8 +218,8 @@ echo "::group::Installing tket and tket-c-api ===="
         mkdir build
         cd build
         cmake \
-            -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
-            -DCMAKE_PREFIX_PATH=${INSTALL_DIR} \
+            -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+            -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
@@ -232,8 +232,8 @@ echo "::group::Installing tket and tket-c-api ===="
         mkdir build
         cd build
         cmake \
-            -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
-            -DCMAKE_PREFIX_PATH=${INSTALL_DIR} \
+            -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+            -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
