@@ -7,6 +7,7 @@ LLVM_TAG="llvmorg-${LLVM_VERSION}"
 INSTALL_PREFIX="C:\\hugrverse\\"
 BUILD_DIR="C:\\Temp\\llvm-build"
 SOURCE_TARBALL="llvm-project-${LLVM_VERSION}.src.tar.xz"
+SOURCE_DIR="llvm-project-${LLVM_VERSION}.src"
 
 OUTPUT_TARBALL="$1"
 
