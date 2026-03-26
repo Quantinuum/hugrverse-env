@@ -26,14 +26,6 @@ jobs:
         exclude:
           - dependency: tket
             platform:
-              name: macosx_15_0_x86_64
-              runs-on: macos-15-intel
-          - dependency: tket
-            platform:
-              name: macosx_15_0_aarch64
-              runs-on: macos-15
-          - dependency: tket
-            platform:
               name: win_amd64
               runs-on: windows-latest
 

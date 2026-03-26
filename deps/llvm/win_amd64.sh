@@ -12,12 +12,6 @@ SOURCE_DIR="llvm-project-${LLVM_VERSION}.src"
 OUTPUT_TARBALL="$1"
 
 
-#echo "::group::Installing build dependencies"
-#        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
-#        choco install ninja -y
-#echo "::endgroup::"
-
-
 echo "::group::Downloading LLVM ${LLVM_VERSION} source"
     mkdir -p "${BUILD_DIR}"
     cd "${BUILD_DIR}"

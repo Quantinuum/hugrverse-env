@@ -34,7 +34,8 @@ echo "::group::Downloading Sources"
 
     echo "::group::GMP @ ${TAG_GMP}"
     mkdir -p ${SRC_DIR}/gmp
-    curl -L https://gmplib.org/download/gmp/gmp-${TAG_GMP}.tar.bz2 \
+    # Note: we use a mirror as the main gmp download site is routinely unresponsive
+    curl -L https://ftp.wayne.edu/gnu/gmp/gmp-${TAG_GMP}.tar.bz2 \
         | tar --strip-components=1 -xj -C ${SRC_DIR}/gmp
     echo "::endgroup::"
 

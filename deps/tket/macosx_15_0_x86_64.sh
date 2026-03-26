@@ -8,8 +8,8 @@ TAG_NLOHMANN_JSON="3.12.0"
 TAG_CATCH2="3.13.0"
 TAG_GMP="6.3.0"
 
-SRC_DIR=/tmp/src
-INSTALL_DIR=/tmp/hugrverse
+SRC_DIR=/opt/sources
+INSTALL_DIR=/opt/hugrverse
 OUTPUT_TARBALL="$1"
 
 CMAKE_BUILD_PARALLEL_LEVEL="$(nproc)"
