@@ -32,7 +32,7 @@ echo "::endgroup::"
 
 echo "::group::Extracting source"
     if [ ! -d "${SOURCE_DIR}" ]; then
-        tar xf "${TARBALL}"
+        tar xf "${SOURCE_TARBALL}"
     fi
 echo "::endgroup::"
 

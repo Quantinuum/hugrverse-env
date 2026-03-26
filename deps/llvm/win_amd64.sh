@@ -1,67 +1,67 @@
-# Build LLVM 21.1.8 from source for win_amd64.
-# Installs to C:\hugrverse\.
-[CmdletBinding()]
-param()
-$ErrorActionPreference = "Stop"
+# Build LLVM 21.1.8 from source for windows
+# Installs to /opt/llvm.
+set -euo pipefail
 
-$LlvmVersion = "21.1.8"
-$LlvmTag = "llvmorg-$LlvmVersion"
-$InstallPrefix = "C:\hugrverse\"
-$BuildDir = "C:\Temp\llvm-build"
-$Tarball = "llvm-project-$LlvmVersion.src.tar.xz"
+LLVM_VERSION="21.1.8"
+LLVM_TAG="llvmorg-${LLVM_VERSION}"
+INSTALL_PREFIX="C:\\hugrverse\\"
+BUILD_DIR="C:\\Temp\\llvm-build"
+SOURCE_TARBALL="llvm-project-${LLVM_VERSION}.src.tar.xz"
 
-Write-Host "=== Installing build dependencies ==="
-# cmake and ninja are available in the Visual Studio environment;
-# ensure they are on the PATH via the VS Developer Shell.
-if (-not (Get-Command cmake -ErrorAction SilentlyContinue)) {
-    choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
-}
-if (-not (Get-Command ninja -ErrorAction SilentlyContinue)) {
-    choco install ninja -y
-}
+OUTPUT_TARBALL="$1"
 
-Write-Host "=== Downloading LLVM $LlvmVersion source ==="
-New-Item -ItemType Directory -Force -Path $BuildDir | Out-Null
-Push-Location $BuildDir
 
-if (-not (Test-Path $Tarball)) {
-    $Url = "https://github.com/llvm/llvm-project/releases/download/$LlvmTag/$Tarball"
-    Invoke-WebRequest -Uri $Url -OutFile $Tarball
-}
+echo "::group::Installing build dependencies"
+    if (-not (Get-Command cmake -ErrorAction SilentlyContinue)) {
+        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
+    }
+    if (-not (Get-Command ninja -ErrorAction SilentlyContinue)) {
+        choco install ninja -y
+    }
+echo "::endgroup::"
 
-Write-Host "=== Extracting source ==="
-$SourceDir = "llvm-project-$LlvmVersion.src"
-if (-not (Test-Path $SourceDir)) {
-    & tar xf $Tarball
-}
 
-Write-Host "=== Configuring LLVM ==="
-$BuildSubDir = Join-Path $BuildDir "build"
-New-Item -ItemType Directory -Force -Path $BuildSubDir | Out-Null
+echo "::group::Downloading LLVM ${LLVM_VERSION} source"
+    mkdir -p "${BUILD_DIR}"
+    cd "${BUILD_DIR}"
 
-$LlvmSrc = Join-Path $BuildDir "$SourceDir\llvm"
-cmake `
-    -S $LlvmSrc `
-    -B $BuildSubDir `
-    -G Ninja `
-    -DCMAKE_BUILD_TYPE=Release `
-    -DCMAKE_INSTALL_PREFIX="$InstallPrefix" `
-    -DLLVM_TARGETS_TO_BUILD="AArch64;X86" `
-    -DLLVM_BUILD_TOOLS=ON `
-    -DLLVM_INCLUDE_TESTS=OFF `
-    -DLLVM_INCLUDE_EXAMPLES=OFF `
-    -DLLVM_INCLUDE_BENCHMARKS=OFF `
-    -DLLVM_ENABLE_ASSERTIONS=OFF `
-    -DLLVM_ENABLE_ZLIB=OFF `
-    -DLLVM_ENABLE_ZSTD=OFF `
-    -DLLVM_ENABLE_LIBXML2=OFF
+    if [ ! -f "${SOURCE_TARBALL}" ]; then
+        curl -fsSL -o "${SOURCE_TARBALL}" \
+            "https://github.com/llvm/llvm-project/releases/download/${LLVM_TAG}/${SOURCE_TARBALL}"
+    fi
+echo "::endgroup::"
 
-if ($LASTEXITCODE -ne 0) { throw "cmake configure failed" }
 
-Write-Host "=== Building and installing LLVM (this may take a while) ==="
-$Jobs = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors
-cmake --build $BuildSubDir --target install -- -j $Jobs
-if ($LASTEXITCODE -ne 0) { throw "cmake build failed" }
+echo "::group::Extracting source"
+    if [ ! -d "${SOURCE_DIR}" ]; then
+        tar xf "${SOURCE_TARBALL}"
+    fi
+echo "::endgroup::"
 
-Pop-Location
-Write-Host "=== LLVM $LlvmVersion installed to $InstallPrefix ==="
+echo "::group::Configuring LLVM"
+    mkdir -p "${BUILD_DIR}/build"
+    cmake \
+        -S "${BUILD_DIR}/${SOURCE_DIR}/llvm" \
+        -B "${BUILD_DIR}/build" \
+        -G Ninja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}" \
+        -DLLVM_TARGETS_TO_BUILD="AArch64;X86" \
+        -DLLVM_INCLUDE_TESTS=OFF \
+        -DLLVM_INCLUDE_EXAMPLES=OFF \
+        -DLLVM_INCLUDE_BENCHMARKS=OFF \
+        -DLLVM_ENABLE_ASSERTIONS=OFF \
+        -DLLVM_ENABLE_ZLIB=OFF \
+        -DLLVM_ENABLE_ZSTD=OFF \
+        -DLLVM_ENABLE_LIBXML2=OFF
+echo "::endgroup::"
+
+
+echo "::group::Building and installing LLVM (this may take a while)"
+    cmake --build "${BUILD_DIR}/build" --target install --parallel "$(nproc)"
+echo "::endgroup::"
+
+
+echo "::group::Compressing LLVM installation to output tarball"
+    tar -czvf "${OUTPUT_TARBALL}" ${INSTALL_PREFIX}
+echo "::endgroup::"
