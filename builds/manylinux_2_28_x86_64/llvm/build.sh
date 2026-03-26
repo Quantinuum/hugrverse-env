@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 # Build LLVM 21.1.8 from source for manylinux_2_28_x86_64.
-# Installs to /opt/llvm.
 set -euo pipefail
 
 LLVM_VERSION="21.1.8"
 LLVM_TAG="llvmorg-${LLVM_VERSION}"
-INSTALL_PREFIX="/opt/llvm"
+INSTALL_PREFIX="/tmp/hugrverse"
 BUILD_DIR="/tmp/llvm-build"
 TARBALL="llvm-project-${LLVM_VERSION}.src.tar.xz"
 

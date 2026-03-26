@@ -13,12 +13,13 @@ OUTPUT_PATH="${1:?Usage: $0 <output_path>}"
 echo "=== hugrverse-env build: manylinux_2_28_x86_64 ==="
 
 # ── Component builds ─────────────────────────────────────────────────────────
+echo "--- Building TKET ---"
+bash "${SCRIPT_DIR}/tket/build.sh"
 echo "--- Building LLVM ---"
 bash "${SCRIPT_DIR}/llvm/build.sh"
 
 # ── Bundle outputs ────────────────────────────────────────────────────────────
 echo "=== Bundling outputs to ${OUTPUT_PATH} ==="
-# Preserve the /opt/llvm tree so that consumers can extract into /.
-tar -czf "${OUTPUT_PATH}" -C / opt/llvm
+tar -czf "${OUTPUT_PATH}" /tmp/hugrverse
 
 echo "=== Build complete: ${OUTPUT_PATH} ==="
