@@ -10,32 +10,33 @@ on:
 # Builds for each platform run in parallel.
 jobs:
   build:
-    matrix:
-      dependency: [llvm, tket]
-      platform:
-        - name: manylinux_2_28_x86_64
-          runs-on: ubuntu-latest
-        - name: manylinux_2_28_aarch64
-          runs-on: ubuntu-24.04-arm
-        - name: macosx_15_0_arm64
-          runs-on: macos-15
-        - name: macosx_15_0_x86_64
-          runs-on: macos-15-intel
-        - name: win_amd64
-          runs-on: windows-latest
-      exclude:
-        - dependency: tket
-          platform:
-            name: macosx_15_0_x86_64
-            runs-on: macos-15-intel
-        - dependency: tket
-          platform:
-            name: macosx_15_0_arm64
+    strategy:
+      matrix:
+        dependency: [llvm, tket]
+        platform:
+          - name: manylinux_2_28_x86_64
+            runs-on: ubuntu-latest
+          - name: manylinux_2_28_aarch64
+            runs-on: ubuntu-24.04-arm
+          - name: macosx_15_0_arm64
             runs-on: macos-15
-        - dependency: tket
-          platform:
-            name: win_amd64
+          - name: macosx_15_0_x86_64
+            runs-on: macos-15-intel
+          - name: win_amd64
             runs-on: windows-latest
+        exclude:
+          - dependency: tket
+            platform:
+              name: macosx_15_0_x86_64
+              runs-on: macos-15-intel
+          - dependency: tket
+            platform:
+              name: macosx_15_0_arm64
+              runs-on: macos-15
+          - dependency: tket
+            platform:
+              name: win_amd64
+              runs-on: windows-latest
 
     name: Build ${{ matrix.dependency }} for ${{ matrix.platform.name }}
     runs-on: ${{ matrix.platform.runs-on }}
@@ -49,23 +50,24 @@ jobs:
         uses: actions/cache@v4
         with:
           path: hugrenv-${{ matrix.dependency }}-${{ matrix.platform.name }}.tar.gz
-          key: ${{ matrix.dependency }}-${{ matrix.platform.name }}-${{ hashFiles('deps/${{ matrix.dependency }}/${{ matrix.platform.name }}.sh') }}
+          key: ${{ matrix.dependency }}-${{ matrix.platform.name }}-${{ hashFiles(format('deps/{0}/{1}.sh', matrix.dependency, matrix.platform.name)) }}
 
       - name: Build inside container
-        # if we're targetting manylinux, we need to build inside a container
         if: startsWith(matrix.platform.name, 'manylinux_') && steps.cache.outputs.cache-hit != 'true'
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/host" \
             quay.io/pypa/${{ matrix.platform.name }} \
-            /bin/bash /host/deps/${{ matrix.dependency }}/${{matrix.platform.name}}.sh \
-              "/host/hugrenv-${{matrix.dependency}}-${{ matrix.platform.name}}.tar.gz"
+            bash \
+              "/host/deps/${{ matrix.dependency }}/${{ matrix.platform.name }}.sh" \
+              "/host/hugrenv-${{ matrix.dependency }}-${{ matrix.platform.name }}.tar.gz"
 
       - name: Build natively
         if: !startsWith(matrix.platform.name, 'manylinux_') && steps.cache.outputs.cache-hit != 'true'
         run: |
-          bash deps/$/${{ matrix.platform.name }}/build.sh \
-            "${{ github.workspace }}/hugrenv-${{matrix.dependency}}-${{ matrix.platform.name}}.tar.gz"
+          bash \
+            "deps/${{ matrix.dependency }}/${{ matrix.platform.name }}.sh" \
+            "${{ github.workspace }}/hugrenv-${{ matrix.dependency }}-${{ matrix.platform.name}}.tar.gz"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
