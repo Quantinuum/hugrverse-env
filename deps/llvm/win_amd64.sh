@@ -11,14 +11,10 @@ SOURCE_TARBALL="llvm-project-${LLVM_VERSION}.src.tar.xz"
 OUTPUT_TARBALL="$1"
 
 
-echo "::group::Installing build dependencies"
-    if (-not (Get-Command cmake -ErrorAction SilentlyContinue)) {
-        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
-    }
-    if (-not (Get-Command ninja -ErrorAction SilentlyContinue)) {
-        choco install ninja -y
-    }
-echo "::endgroup::"
+#echo "::group::Installing build dependencies"
+#        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' -y
+#        choco install ninja -y
+#echo "::endgroup::"
 
 
 echo "::group::Downloading LLVM ${LLVM_VERSION} source"
