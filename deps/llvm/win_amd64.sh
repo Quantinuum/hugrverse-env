@@ -1,12 +1,12 @@
 # Build LLVM 21.1.8 from source for win_amd64.
-# Installs to C:\hugrverse\llvm.
+# Installs to C:\hugrverse\.
 [CmdletBinding()]
 param()
 $ErrorActionPreference = "Stop"
 
 $LlvmVersion = "21.1.8"
 $LlvmTag = "llvmorg-$LlvmVersion"
-$InstallPrefix = "C:\hugrverse\llvm"
+$InstallPrefix = "C:\hugrverse\"
 $BuildDir = "C:\Temp\llvm-build"
 $Tarball = "llvm-project-$LlvmVersion.src.tar.xz"
 

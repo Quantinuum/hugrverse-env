@@ -1,7 +1,0 @@
-{
-  "builds/manylinux_2_28_x86_64": "0.2.0",
-  "builds/manylinux_2_28_aarch64": "0.2.0",
-  "builds/macosx_15_0_arm64": "0.2.0",
-  "builds/macosx_15_0_x86_64": "0.2.0",
-  "builds/win_amd64": "0.2.0"
-}
