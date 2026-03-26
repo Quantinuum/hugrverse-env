@@ -55,5 +55,6 @@ echo "::endgroup::"
 
 
 echo "::group::Compressing LLVM installation to output tarball"
-    tar -czvf "${OUTPUT_TARBALL}" ${INSTALL_PREFIX}
+    # use windows tar instead of tar from msys2 to avoid issues with windows drive paths
+    command /c/Windows/System32/tar.exe -czvf "${OUTPUT_TARBALL}" "${INSTALL_PREFIX}"
 echo "::endgroup::"
