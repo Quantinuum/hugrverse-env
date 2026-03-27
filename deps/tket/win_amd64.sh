@@ -65,6 +65,8 @@ echo "::group::Installing Dependencies"
         cmake \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
+            -DCMAKE_CXX_STANDARD=14 \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             ..
         cmake --build . --config Release --config Release
         # Sometimes the installation step can fail due to transient file locking issues on Windows,
@@ -87,6 +89,8 @@ echo "::group::Installing Dependencies"
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
+            -DCMAKE_CXX_STANDARD=14 \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DBUILD_TESTS=OFF \
             -DBUILD_BENCHMARKS=OFF \
             -DWITH_SYMENGINE_THREAD_SAFE=ON \
@@ -107,6 +111,8 @@ echo "::group::Installing Dependencies"
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
+            -DCMAKE_CXX_STANDARD=14 \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             ..
         cmake --build . --config Release
         cmake --install . --config Release
@@ -121,6 +127,8 @@ echo "::group::Installing Dependencies"
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
+            -DCMAKE_CXX_STANDARD=14 \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DJSON_BuildTests=OFF \
             ..
         cmake --build . --config Release
@@ -136,6 +144,8 @@ echo "::group::Installing Dependencies"
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
+            -DCMAKE_CXX_STANDARD=14 \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             ..
         cmake --build . --config Release
         cmake --install . --config Release
@@ -155,6 +165,8 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
+            -DCMAKE_CXX_STANDARD=14 \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
@@ -171,6 +183,8 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
+            -DCMAKE_CXX_STANDARD=14 \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
@@ -187,6 +201,8 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
+            -DCMAKE_CXX_STANDARD=14 \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
@@ -203,6 +219,8 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
+            -DCMAKE_CXX_STANDARD=14 \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
@@ -219,6 +237,8 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
+            -DCMAKE_CXX_STANDARD=14 \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
@@ -235,6 +255,8 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
+            -DCMAKE_CXX_STANDARD=14 \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
@@ -251,6 +273,8 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
+            -DCMAKE_CXX_STANDARD=14 \
+            -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
