@@ -17,6 +17,12 @@ export CMAKE_BUILD_PARALLEL_LEVEL
 mkdir -p ${SRC_DIR}
 mkdir -p ${INSTALL_PREFIX}
 
+echo "::group::Debug"
+    echo "which cmake: $(which cmake)"
+    echo "which cl: $(which cl)"
+    echo "which c++: $(which c++)"
+echo "::endgroup::"
+
 echo "::group::Downloading Sources"
 
     echo "::group::TKET @ ${TAG_TKET}"

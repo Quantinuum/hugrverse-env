@@ -36,6 +36,10 @@ jobs:
           path: hugrenv-${{ matrix.dependency }}-${{ matrix.platform.name }}.tar.gz
           key: ${{ matrix.dependency }}-${{ matrix.platform.name }}-${{ hashFiles(format('deps/{0}/{1}.sh', matrix.dependency, matrix.platform.name)) }}
 
+      - name: Setup MSVC (Windows only)
+        if: ${{ startsWith(matrix.platform.name, 'win_') }}
+        uses: ilammy/msvc-dev-cmd@v1
+
       - name: Build inside container
         if: ${{ startsWith(matrix.platform.name, 'manylinux_') && steps.cache.outputs.cache-hit != 'true' }}
         shell: bash
