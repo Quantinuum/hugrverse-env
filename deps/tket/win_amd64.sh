@@ -12,7 +12,11 @@ INSTALL_PREFIX=/tmp/hugrverse
 OUTPUT_TARBALL="$(cygpath -u "$1")"
 
 CMAKE_BUILD_PARALLEL_LEVEL="$(nproc)"
+CC=cl
+CXX=cl
 export CMAKE_BUILD_PARALLEL_LEVEL
+export CC
+export CXX
 
 mkdir -p ${SRC_DIR}
 mkdir -p ${INSTALL_PREFIX}
