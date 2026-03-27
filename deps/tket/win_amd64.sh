@@ -74,8 +74,15 @@ echo "::group::Installing Dependencies"
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             ..
-        cmake --build .
-        cmake --install .
+        cmake --build . --config Release
+        # Sometimes the installation step can fail due to transient file locking issues on Windows,
+        # so we use a retry mechanism to try to beat it. It's that or build/install Boost single-threaded,
+        # which is not ideal.
+        for i in 1 2 3 4 5; do
+            cmake --install . --config Release && break
+            echo "Retrying installation (attempt $i)..."
+            sleep 2
+        done
     echo "::endgroup::"
 
     echo "::group::gmp"
