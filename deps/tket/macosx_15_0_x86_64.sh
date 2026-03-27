@@ -96,6 +96,7 @@ echo "::group::Installing Dependencies"
             -DBUILD_TESTS=OFF \
             -DBUILD_BENCHMARKS=OFF \
             -DWITH_SYMENGINE_THREAD_SAFE=ON \
+            -DBUILD_SHARED_LIBS=ON \
             ..
         cmake --build .
         cmake --install .
