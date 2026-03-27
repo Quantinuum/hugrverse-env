@@ -24,11 +24,6 @@ jobs:
             runs-on: macos-15-intel
           - name: win_amd64
             runs-on: windows-latest
-        exclude:
-          - dependency: tket
-            platform:
-              name: win_amd64
-              runs-on: windows-latest
     name: Build ${{ matrix.dependency }} for ${{ matrix.platform.name }}
     runs-on: ${{ matrix.platform.runs-on }}
     steps:

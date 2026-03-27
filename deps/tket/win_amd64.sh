@@ -10,9 +10,9 @@ TAG_GMP="6.3.0"
 
 SRC_DIR=/tmp/src
 INSTALL_PREFIX=/tmp/hugrverse
-OUTPUT_TARBALL="$1"
+OUTPUT_TARBALL="$(cygpath -u "$1")"
 
-CMAKE_BUILD_PARALLEL_LEVEL="$(sysctl -n hw.logicalcpu)"
+CMAKE_BUILD_PARALLEL_LEVEL="$(nproc)"
 export CMAKE_BUILD_PARALLEL_LEVEL
 
 mkdir -p ${SRC_DIR}
@@ -222,7 +222,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
-            -DCMAKE_SHARED_LINKER_FLAGS="-L${INSTALL_PREFIX}/lib -lgmp -lgmpxx" \
             ..
         cmake --build .
         cmake --install .
@@ -237,7 +236,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
-            -DCMAKE_SHARED_LINKER_FLAGS="-L${INSTALL_PREFIX}/lib -lgmp -lgmpxx" \
             ..
         cmake --build .
         cmake --install .
