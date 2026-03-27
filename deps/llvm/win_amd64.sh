@@ -4,12 +4,12 @@ set -euo pipefail
 
 LLVM_VERSION="21.1.8"
 LLVM_TAG="llvmorg-${LLVM_VERSION}"
-INSTALL_PREFIX="C:\\hugrverse\\"
+INSTALL_PREFIX="/c/hugrverse"
 BUILD_DIR="C:\\Temp\\llvm-build"
 SOURCE_TARBALL="llvm-project-${LLVM_VERSION}.src.tar.xz"
 SOURCE_DIR="llvm-project-${LLVM_VERSION}.src"
 
-OUTPUT_TARBALL="$1"
+OUTPUT_TARBALL="$(cygpath -u "$1")"
 
 
 echo "::group::Downloading LLVM ${LLVM_VERSION} source"
@@ -55,6 +55,5 @@ echo "::endgroup::"
 
 
 echo "::group::Compressing LLVM installation at '${INSTALL_PREFIX}' to output tarball '${OUTPUT_TARBALL}'"
-    # use windows tar instead of tar from msys2 to avoid issues with windows drive paths
-    command /c/Windows/System32/tar.exe -czvf "${OUTPUT_TARBALL}" "${INSTALL_PREFIX}"
+    tar -czvf "${OUTPUT_TARBALL}" "${INSTALL_PREFIX}"
 echo "::endgroup::"
