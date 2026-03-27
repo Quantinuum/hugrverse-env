@@ -238,7 +238,7 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
-            -DCMAKE_SHARED_LINKER_FLAGS="-L${INSTALL_PREFIX}/lib -lgmp -lgmpxx" \
+            -DCMAKE_SHARED_LINKER_FLAGS="-L${INSTALL_PREFIX}/lib -lgmp -lgmpxx -lsymengine" \
             ..
         cmake --build .
         cmake --install .

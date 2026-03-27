@@ -6,7 +6,6 @@ TAG_SYMENGINE="v0.14.0"
 TAG_EIGEN="5.0.1"
 TAG_NLOHMANN_JSON="3.12.0"
 TAG_CATCH2="3.13.0"
-TAG_GMP="6.3.0"
 
 SRC_DIR=/tmp/src
 INSTALL_PREFIX=/tmp/hugrverse
@@ -30,13 +29,6 @@ echo "::group::Downloading Sources"
     mkdir -p ${SRC_DIR}/boost
     curl -L https://github.com/boostorg/boost/releases/download/boost-${TAG_BOOST}/boost-${TAG_BOOST}-cmake.tar.xz \
         | tar --strip-components=1 -xJ -C ${SRC_DIR}/boost
-    echo "::endgroup::"
-
-    echo "::group::GMP @ ${TAG_GMP}"
-    mkdir -p ${SRC_DIR}/gmp
-    # Note: we use a mirror as the main gmp download site is routinely unresponsive
-    curl -L https://ftp.wayne.edu/gnu/gmp/gmp-${TAG_GMP}.tar.bz2 \
-        | tar --strip-components=1 -xj -C ${SRC_DIR}/gmp
     echo "::endgroup::"
 
     echo "::group::SymEngine @ ${TAG_SYMENGINE}"
@@ -74,22 +66,15 @@ echo "::group::Installing Dependencies"
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             ..
-        cmake --build . --config Release
+        cmake --build . --config Release --config Release
         # Sometimes the installation step can fail due to transient file locking issues on Windows,
         # so we use a retry mechanism to try to beat it. It's that or build/install Boost single-threaded,
         # which is not ideal.
         for i in 1 2 3 4 5; do
-            cmake --install . --config Release && break
+            cmake --install . --config Release --config Release && break
             echo "Retrying installation (attempt $i)..."
             sleep 2
         done
-    echo "::endgroup::"
-
-    echo "::group::gmp"
-        cd ${SRC_DIR}/gmp
-        ./configure --prefix=${INSTALL_PREFIX} --enable-cxx=yes
-        make -j$(nproc)
-        make install
     echo "::endgroup::"
 
     echo "::group::symengine"
@@ -98,14 +83,19 @@ echo "::group::Installing Dependencies"
         mkdir build
         cd build
         cmake \
+            -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DBUILD_TESTS=OFF \
             -DBUILD_BENCHMARKS=OFF \
             -DWITH_SYMENGINE_THREAD_SAFE=ON \
+            -DINTEGER_CLASS=boostmp \
+            -DWITH_GMP=OFF \
+            -DWITH_MPFR=OFF \
             ..
-        cmake --build .
-        cmake --install .
+        cmake --build . --config Release
+        cmake --install . --config Release
     echo "::endgroup::"
 
     echo "::group::eigen"
@@ -113,11 +103,13 @@ echo "::group::Installing Dependencies"
         mkdir build
         cd build
         cmake \
+            -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             ..
-        cmake --build .
-        cmake --install .
+        cmake --build . --config Release
+        cmake --install . --config Release
     echo "::endgroup::"
 
     echo "::group::nlohmann_json"
@@ -125,12 +117,14 @@ echo "::group::Installing Dependencies"
         mkdir build
         cd build
         cmake \
+            -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DJSON_BuildTests=OFF \
             ..
-        cmake --build .
-        cmake --install .
+        cmake --build . --config Release
+        cmake --install . --config Release
     echo "::endgroup::"
 
     echo "::group::catch2"
@@ -138,11 +132,13 @@ echo "::group::Installing Dependencies"
         mkdir build
         cd build
         cmake \
+            -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             ..
-        cmake --build .
-        cmake --install .
+        cmake --build . --config Release
+        cmake --install . --config Release
     echo "::endgroup::"
 
 
@@ -155,13 +151,15 @@ echo "::group::Installing tket and tket-c-api ===="
         mkdir build
         cd build
         cmake \
+            -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
-        cmake --build .
-        cmake --install .
+        cmake --build . --config Release
+        cmake --install . --config Release
     echo "::endgroup::"
 
     echo "::group::tkrng"
@@ -169,13 +167,15 @@ echo "::group::Installing tket and tket-c-api ===="
         mkdir build
         cd build
         cmake \
+            -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
-        cmake --build .
-        cmake --install .
+        cmake --build . --config Release
+        cmake --install . --config Release
     echo "::endgroup::"
 
     echo "::group::tkassert"
@@ -183,13 +183,15 @@ echo "::group::Installing tket and tket-c-api ===="
         mkdir build
         cd build
         cmake \
+            -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
-        cmake --build .
-        cmake --install .
+        cmake --build . --config Release
+        cmake --install . --config Release
     echo "::endgroup::"
 
     echo "::group::tkwsm"
@@ -197,13 +199,15 @@ echo "::group::Installing tket and tket-c-api ===="
         mkdir build
         cd build
         cmake \
+            -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
-        cmake --build .
-        cmake --install .
+        cmake --build . --config Release
+        cmake --install . --config Release
     echo "::endgroup::"
 
     echo "::group::tktokenswap"
@@ -211,13 +215,15 @@ echo "::group::Installing tket and tket-c-api ===="
         mkdir build
         cd build
         cmake \
+            -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
-        cmake --build .
-        cmake --install .
+        cmake --build . --config Release
+        cmake --install . --config Release
     echo "::endgroup::"
 
     echo "::group::tket"
@@ -225,13 +231,15 @@ echo "::group::Installing tket and tket-c-api ===="
         mkdir build
         cd build
         cmake \
+            -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
-        cmake --build .
-        cmake --install .
+        cmake --build . --config Release
+        cmake --install . --config Release
     echo "::endgroup::"
 
     echo "::group::tket-c-api"
@@ -239,13 +247,15 @@ echo "::group::Installing tket and tket-c-api ===="
         mkdir build
         cd build
         cmake \
+            -G "Ninja" \
+            -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
             ..
-        cmake --build .
-        cmake --install .
+        cmake --build . --config Release
+        cmake --install . --config Release
     echo "::endgroup::"
 
 echo "::endgroup::"
