@@ -123,6 +123,13 @@ echo "::group::Installing Dependencies"
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
+            -DEIGEN_BUILD_TESTING=OFF \
+            -DEIGEN_BUILD_BLAS=OFF \
+            -DEIGEN_BUILD_LAPACK=OFF \
+            -DEIGEN_BUILD_DOC=OFF \
+            -DEIGEN_BUILD_DEMOS=OFF \
+            -DEIGEN_BUILD_PKGCONFIG=OFF \
+            -DEIGEN_BUILD_CMAKE_PACKAGE=ON \
             ..
         cmake --build . --config Release
         cmake --install . --config Release
