@@ -101,8 +101,6 @@ echo "::group::Installing Dependencies"
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
-            -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
-            -DBUILD_SHARED_LIBS=ON \
             -DBUILD_TESTS=OFF \
             -DBUILD_BENCHMARKS=OFF \
             -DWITH_SYMENGINE_THREAD_SAFE=ON \
@@ -187,8 +185,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
-            -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
             ..
         cmake --build . --config Release
         cmake --install . --config Release
@@ -206,8 +202,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
-            -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
             ..
         cmake --build . --config Release
         cmake --install . --config Release
@@ -225,8 +219,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
-            -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
             ..
         cmake --build . --config Release
         cmake --install . --config Release
@@ -244,8 +236,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
-            -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
             ..
         cmake --build . --config Release
         cmake --install . --config Release
@@ -263,8 +253,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
-            -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
             ..
         cmake --build . --config Release
         cmake --install . --config Release
@@ -282,8 +270,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
-            -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
             ..
         cmake --build . --config Release
         cmake --install . --config Release
@@ -301,8 +287,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
-            -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
             ..
         cmake --build . --config Release
         cmake --install . --config Release
