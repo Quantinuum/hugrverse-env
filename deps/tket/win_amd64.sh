@@ -7,8 +7,11 @@ TAG_EIGEN="5.0.1"
 TAG_NLOHMANN_JSON="3.12.0"
 TAG_CATCH2="3.13.0"
 
-SRC_DIR=/tmp/src
-INSTALL_PREFIX=/tmp/hugrverse
+BASE_DIR=/tmp
+SRC_CHILD=src
+INSTALL_CHILD=hugrverse
+SRC_DIR="${BASE_DIR}/${SRC_CHILD}"
+INSTALL_PREFIX="${BASE_DIR}/${INSTALL_CHILD}"
 OUTPUT_TARBALL="$(cygpath -u "$1")"
 
 CMAKE_BUILD_PARALLEL_LEVEL="$(nproc)"
@@ -277,6 +280,12 @@ echo "::group::Installing tket and tket-c-api ===="
 
     echo "::group::tket-c-api"
         cd "${SRC_DIR}/tket/tket-c-api"
+        # first patch cmakelists.txt to avoid gmp.
+        sed -i.bak -E '
+            /find_package\(gmp CONFIG\)/d;
+            /if \(NOT gmp_FOUND\)/,/endif\(\)/d;
+            /if \(NOT TARGET gmp::gmp\)/,/endif\(\)/d;
+        ' CMakeLists.txt
         mkdir build
         cd build
         cmake \
@@ -295,5 +304,5 @@ echo "::group::Installing tket and tket-c-api ===="
 echo "::endgroup::"
 
 echo "::group::Compressing LLVM installation to output tarball"
-    tar -czvf "${OUTPUT_TARBALL}" ${INSTALL_PREFIX}
+    tar -czvf "${OUTPUT_TARBALL}" -C ${BASE_DIR} ${INSTALL_CHILD}
 echo "::endgroup::"
