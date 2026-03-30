@@ -301,6 +301,9 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+            -DBoost_ROOT=${INSTALL_PREFIX} \
+            -DBoost_INCLUDE_DIR=${INSTALL_PREFIX}/include/boost-1_90 \
+            -DBoost_DIR=${INSTALL_PREFIX}/lib/cmake/Boost-1.90.0 \
             ..
         cmake --build . --config Release
         cmake --install . --config Release
