@@ -5,25 +5,27 @@ on:
   push:
     branches:
       - main
-  release:
-    types: [published]
   workflow_dispatch:
 
-# Minimal permissions at workflow level; jobs that upload to a release use
-# contents:write (needed by `gh release upload`).
-permissions:
-  contents: read
-
-# Builds for each platform run in parallel. On a release event the resulting
-# archive is also uploaded to the GitHub release.
 jobs:
-  # ── manylinux_2_28_x86_64 ───────────────────────────────────────────────────
-  build-manylinux-x86_64:
-    name: manylinux_2_28_x86_64
-    runs-on: ubuntu-latest
-    timeout-minutes: 360
-    permissions:
-      contents: write
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        dependency: [llvm, tket]
+        platform:
+          - name: manylinux_2_28_x86_64
+            runs-on: ubuntu-latest
+          - name: manylinux_2_28_aarch64
+            runs-on: ubuntu-24.04-arm
+          - name: macosx_15_0_aarch64
+            runs-on: macos-15
+          - name: macosx_15_0_x86_64
+            runs-on: macos-15-intel
+          - name: win_amd64
+            runs-on: windows-latest
+    name: Build ${{ matrix.dependency }} for ${{ matrix.platform.name }}
+    runs-on: ${{ matrix.platform.runs-on }}
     steps:
       - uses: actions/checkout@v4
 
@@ -31,192 +33,34 @@ jobs:
         id: cache
         uses: actions/cache@v4
         with:
-          path: hugrverse_env_manylinux_2_28_x86_64.tar.gz
-          key: manylinux_2_28_x86_64-${{ hashFiles('builds/manylinux_2_28_x86_64/**') }}
+          path: hugrenv-${{ matrix.dependency }}-${{ matrix.platform.name }}.tar.gz
+          key: ${{ matrix.dependency }}-${{ matrix.platform.name }}-${{ hashFiles(format('deps/{0}/{1}.sh', matrix.dependency, matrix.platform.name)) }}
 
-      - name: Build inside manylinux_2_28_x86_64 container
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          docker run --rm \
-            -v "${{ github.workspace }}:/host" \
-            quay.io/pypa/manylinux_2_28_x86_64 \
-            /bin/bash /host/builds/manylinux_2_28_x86_64/build.sh \
-              /host/hugrverse_env_manylinux_2_28_x86_64.tar.gz
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: hugrverse_env_manylinux_2_28_x86_64
-          path: hugrverse_env_manylinux_2_28_x86_64.tar.gz
-
-      - name: Upload to release
-        if: github.event_name == 'release'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release upload "${{ github.event.release.tag_name }}" \
-            hugrverse_env_manylinux_2_28_x86_64.tar.gz \
-            --clobber
-
-  # ── manylinux_2_28_aarch64 ──────────────────────────────────────────────────
-  build-manylinux-aarch64:
-    name: manylinux_2_28_aarch64
-    runs-on: ubuntu-24.04-arm
-    timeout-minutes: 360
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Restore cached build
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: hugrverse_env_manylinux_2_28_aarch64.tar.gz
-          key: manylinux_2_28_aarch64-${{ hashFiles('builds/manylinux_2_28_aarch64/**') }}
-
-      - name: Build inside manylinux_2_28_aarch64 container
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          docker run --rm \
-            -v "${{ github.workspace }}:/host" \
-            quay.io/pypa/manylinux_2_28_aarch64 \
-            /bin/bash /host/builds/manylinux_2_28_aarch64/build.sh \
-              /host/hugrverse_env_manylinux_2_28_aarch64.tar.gz
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: hugrverse_env_manylinux_2_28_aarch64
-          path: hugrverse_env_manylinux_2_28_aarch64.tar.gz
-
-      - name: Upload to release
-        if: github.event_name == 'release'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release upload "${{ github.event.release.tag_name }}" \
-            hugrverse_env_manylinux_2_28_aarch64.tar.gz \
-            --clobber
-
-  # ── macosx_15_0_arm64 ───────────────────────────────────────────────────────
-  build-macos-arm64:
-    name: macosx_15_0_arm64
-    runs-on: macos-15
-    timeout-minutes: 360
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Restore cached build
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: hugrverse_env_macosx_15_0_arm64.tar.gz
-          key: macosx_15_0_arm64-${{ hashFiles('builds/macosx_15_0_arm64/**') }}
-
-      - name: Build
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          bash builds/macosx_15_0_arm64/build.sh \
-            "${{ github.workspace }}/hugrverse_env_macosx_15_0_arm64.tar.gz"
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: hugrverse_env_macosx_15_0_arm64
-          path: hugrverse_env_macosx_15_0_arm64.tar.gz
-
-      - name: Upload to release
-        if: github.event_name == 'release'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release upload "${{ github.event.release.tag_name }}" \
-            hugrverse_env_macosx_15_0_arm64.tar.gz \
-            --clobber
-
-  # ── macosx_15_0_x86_64 ──────────────────────────────────────────────────────
-  build-macos-x86_64:
-    name: macosx_15_0_x86_64
-    runs-on: macos-15-intel
-    timeout-minutes: 360
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Restore cached build
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: hugrverse_env_macosx_15_0_x86_64.tar.gz
-          key: macosx_15_0_x86_64-${{ hashFiles('builds/macosx_15_0_x86_64/**') }}
-
-      - name: Build
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          bash builds/macosx_15_0_x86_64/build.sh \
-            "${{ github.workspace }}/hugrverse_env_macosx_15_0_x86_64.tar.gz"
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: hugrverse_env_macosx_15_0_x86_64
-          path: hugrverse_env_macosx_15_0_x86_64.tar.gz
-
-      - name: Upload to release
-        if: github.event_name == 'release'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release upload "${{ github.event.release.tag_name }}" \
-            hugrverse_env_macosx_15_0_x86_64.tar.gz \
-            --clobber
-
-  # ── win_amd64 ───────────────────────────────────────────────────────────────
-  build-windows:
-    name: win_amd64
-    runs-on: windows-latest
-    timeout-minutes: 360
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Restore cached build
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: hugrverse_env_win_amd64.zip
-          key: win_amd64-${{ hashFiles('builds/win_amd64/**') }}
-
-      - name: Set up MSVC environment
-        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Setup MSVC (Windows only)
+        if: ${{ startsWith(matrix.platform.name, 'win_') }}
         uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: amd64
 
-      - name: Build
-        if: steps.cache.outputs.cache-hit != 'true'
-        shell: pwsh
+      - name: Build inside container
+        if: ${{ startsWith(matrix.platform.name, 'manylinux_') && steps.cache.outputs.cache-hit != 'true' }}
+        shell: bash
         run: |
-          .\builds\win_amd64\build.ps1 `
-            -OutputPath "${{ github.workspace }}\hugrverse_env_win_amd64.zip"
+          docker run --rm \
+            -v "${{ github.workspace }}:/host" \
+            quay.io/pypa/${{ matrix.platform.name }} \
+            bash \
+              "/host/deps/${{ matrix.dependency }}/${{ matrix.platform.name }}.sh" \
+              "/host/hugrenv-${{ matrix.dependency }}-${{ matrix.platform.name }}.tar.gz"
+
+      - name: Build natively
+        if: ${{ !startsWith(matrix.platform.name, 'manylinux_') && steps.cache.outputs.cache-hit != 'true' }}
+        shell: bash
+        run: |
+          bash \
+            "deps/${{ matrix.dependency }}/${{ matrix.platform.name }}.sh" \
+            "${{ github.workspace }}/hugrenv-${{ matrix.dependency }}-${{ matrix.platform.name}}.tar.gz"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: hugrverse_env_win_amd64
-          path: hugrverse_env_win_amd64.zip
-
-      - name: Upload to release
-        if: github.event_name == 'release'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release upload "${{ github.event.release.tag_name }}" `
-            hugrverse_env_win_amd64.zip `
-            --clobber
-        shell: pwsh
+          name: ${{ matrix.dependency }}-${{ matrix.platform.name }}
+          path: hugrenv-${{ matrix.dependency }}-${{ matrix.platform.name }}.tar.gz
