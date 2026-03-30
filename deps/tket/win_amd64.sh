@@ -80,6 +80,7 @@ echo "::group::Installing Dependencies"
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
+            -DCMAKE_INSTALL_MESSAGE=NEVER \
             ..
         cmake --build . --config Release
         # Sometimes the installation step can fail due to transient file locking issues on Windows,
@@ -90,6 +91,12 @@ echo "::group::Installing Dependencies"
             echo "Retrying installation (attempt $i)..."
             sleep 2
         done
+        # ensure boost/uuid/uuid.hpp exists (a later step sometimes fails to find it)
+        if ! [ -f "${INSTALL_PREFIX}/include/boost-1_90/boost/uuid/uuid.hpp" ]; then
+            echo "Error: boost/uuid/uuid.hpp not found in installed Boost headers. Check if Boost was installed correctly."
+            exit 1
+        fi
+ 
     echo "::endgroup::"
 
     echo "::group::symengine"
@@ -110,6 +117,7 @@ echo "::group::Installing Dependencies"
             -DINTEGER_CLASS=boostmp \
             -DWITH_GMP=OFF \
             -DWITH_MPFR=OFF \
+            -DCMAKE_INSTALL_MESSAGE=NEVER \
             ..
         cmake --build . --config Release
         cmake --install . --config Release
@@ -133,6 +141,7 @@ echo "::group::Installing Dependencies"
             -DEIGEN_BUILD_DEMOS=OFF \
             -DEIGEN_BUILD_PKGCONFIG=OFF \
             -DEIGEN_BUILD_CMAKE_PACKAGE=ON \
+            -DCMAKE_INSTALL_MESSAGE=NEVER \
             ..
         cmake --build . --config Release
         cmake --install . --config Release
@@ -150,6 +159,7 @@ echo "::group::Installing Dependencies"
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DJSON_BuildTests=OFF \
+            -DCMAKE_INSTALL_MESSAGE=NEVER \
             ..
         cmake --build . --config Release
         cmake --install . --config Release
@@ -166,6 +176,7 @@ echo "::group::Installing Dependencies"
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
+            -DCMAKE_INSTALL_MESSAGE=NEVER \
             ..
         cmake --build . --config Release
         cmake --install . --config Release
@@ -280,17 +291,17 @@ echo "::group::Installing tket and tket-c-api ===="
 
     echo "::group::tket-c-api"
         cd "${SRC_DIR}/tket/tket-c-api"
-        # The following patches CMakeLists.txt to:
-        # - avoid gmp
-        # - add the dependencies manually (as tket marks them private)
-        # - Change find_package(Boost CONFIG REQUIRED) to find_package(Boost REQUIRED) to avoid picking up the CMake config files for Boost, which don't work well here.
+        # avoid gmp
         sed -i.bak -E '
             /find_package\(gmp CONFIG\)/d;
             /if \(NOT gmp_FOUND\)/,/endif\(\)/d;
             /if \(NOT TARGET gmp::gmp\)/,/endif\(\)/d;
-            s/find_package\(Boost CONFIG REQUIRED\)/set(Boost_NO_BOOST_CMAKE ON)\nfind_package(Boost REQUIRED)/;
-            s/target_link_libraries(tket-c-api PRIVATE tket::tket Eigen3::Eigen)/target_link_libraries(tket-c-api PRIVATE tket::tket Boost::headers Eigen3::Eigen nlohmann_json::nlohmann_json symengine::symengine tkassert::tkassert tklog::tklog tkrng::tkrng tktokenswap::tktokenswap)\ntarget_include_directories(tket-c-api PRIVATE \"${Boost_INCLUDE_DIR}\")/;
         ' CMakeLists.txt
+        # inject extra linking/includes for dependencies, as tket marks them private and doesn't transitively link them through the C API target
+        printf '\n# Injected by hugrverse-env\n' >> CMakeLists.txt
+        printf '# Link against the dependencies manually, as tket marks them private\n' >> CMakeLists.txt
+        printf 'target_link_libraries(tket-c-api PRIVATE Boost::headers nlohmann_json::nlohmann_json symengine::symengine tkassert::tkassert tklog::tklog tkrng::tkrng tktokenswap::tktokenswap)\n' >> CMakeLists.txt
+        printf 'target_include_directories(tket-c-api PRIVATE "%s")\n' "${INSTALL_PREFIX}/include/boost-1_90" >> CMakeLists.txt
         mkdir build
         cd build
         cmake \
