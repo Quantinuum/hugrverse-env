@@ -1,0 +1,86 @@
+name: Promote merged PR artifacts
+
+on:
+  pull_request_target:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  plan:
+    if: ${{ github.event.pull_request.merged == true }}
+    name: Plan targets
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      count: ${{ steps.plan.outputs.count }}
+      head_sha: ${{ steps.meta.outputs.head_sha }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: meta
+        run: echo "head_sha=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
+
+      - id: plan
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Only promote scripts changed by the merged PR.
+          base="${{ github.event.pull_request.base.sha }}"
+          head="${{ github.event.pull_request.head.sha }}"
+          wanted=$(git diff --name-only "$base" "$head" -- 'deps/*/*.sh' | sort || true)
+
+          rows=()
+
+          while IFS= read -r script; do
+            [[ -n "$script" ]] || continue
+            dep=$(cut -d/ -f2 <<<"$script")
+            platform=$(basename "$script" .sh)
+            rows+=("{\"dependency\":\"$dep\",\"platform\":\"$platform\"}")
+          done <<< "$wanted"
+
+          if [[ ${#rows[@]} -eq 0 ]]; then
+            echo 'matrix={"include":[]}' >> "$GITHUB_OUTPUT"
+            echo 'count=0' >> "$GITHUB_OUTPUT"
+          else
+            matrix=$(printf '%s\n' "${rows[@]}" | sort -u | jq -sc '{include: .}')
+            count=$(printf '%s\n' "${rows[@]}" | sort -u | wc -l | tr -d ' ')
+            echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+            echo "count=$count" >> "$GITHUB_OUTPUT"
+          fi
+
+  promote:
+    name: Promote ${{ matrix.dependency }} for ${{ matrix.platform }}
+    needs: plan
+    if: ${{ needs.plan.outputs.count != '0' }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.plan.outputs.matrix) }}
+
+    steps:
+      # Pull the exact artifact built for the merged PR head SHA.
+      # Cross-run artifact download needs a helper action or API.
+      - name: Download PR artifact
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: build.yml
+          commit: ${{ needs.plan.outputs.head_sha }}
+          name: pr-${{ needs.plan.outputs.head_sha }}-${{ matrix.dependency }}-${{ matrix.platform }}
+          path: dist
+          if_no_artifact_found: fail
+
+      # Re-upload with a stable name.
+      # Latest successful promote run on main becomes the source of truth.
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: main-${{ matrix.dependency }}-${{ matrix.platform }}
+          path: dist/*
+          retention-days: 90

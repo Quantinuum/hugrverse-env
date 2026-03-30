@@ -1,0 +1,87 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version, e.g. 1.2.0
+        required: true
+        type: string
+      prerelease:
+        description: Mark as prerelease
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: plan
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rows=()
+
+          while IFS= read -r script; do
+            [[ -n "$script" ]] || continue
+            dep=$(cut -d/ -f2 <<<"$script")
+            platform=$(basename "$script" .sh)
+            rows+=("{\"dependency\":\"$dep\",\"platform\":\"$platform\"}")
+          done < <(find deps -mindepth 2 -maxdepth 2 -type f -name '*.sh' | sort)
+
+          matrix=$(printf '%s\n' "${rows[@]}" | sort -u | jq -sc '{include: .}')
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  collect:
+    needs: plan
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.plan.outputs.matrix) }}
+
+    steps:
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: merge.yml
+          branch: main
+          name: main-${{ matrix.dependency }}-${{ matrix.platform }}
+          path: dist/${{ matrix.dependency }}-${{ matrix.platform }}
+          if_no_artifact_found: fail
+
+      - name: Re-upload for bundling
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-${{ matrix.dependency }}-${{ matrix.platform }}
+          path: dist/${{ matrix.dependency }}-${{ matrix.platform }}/*
+
+  release:
+    needs: collect
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download bundle
+        uses: actions/download-artifact@v4
+        with:
+          pattern: bundle-*
+          merge-multiple: true
+          path: dist
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ inputs.version }}
+          name: v${{ inputs.version }}
+          prerelease: ${{ inputs.prerelease }}
+          files: dist/*
+          fail_on_unmatched_files: true
