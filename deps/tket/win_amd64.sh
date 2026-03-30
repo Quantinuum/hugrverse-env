@@ -81,12 +81,12 @@ echo "::group::Installing Dependencies"
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             ..
-        cmake --build . --config Release --config Release
+        cmake --build . --config Release
         # Sometimes the installation step can fail due to transient file locking issues on Windows,
         # so we use a retry mechanism to try to beat it. It's that or build/install Boost single-threaded,
         # which is not ideal.
         for i in 1 2 3 4 5; do
-            cmake --install . --config Release --config Release && break
+            cmake --install . --config Release && break
             echo "Retrying installation (attempt $i)..."
             sleep 2
         done
@@ -289,7 +289,7 @@ echo "::group::Installing tket and tket-c-api ===="
             /if \(NOT gmp_FOUND\)/,/endif\(\)/d;
             /if \(NOT TARGET gmp::gmp\)/,/endif\(\)/d;
             s/find_package\(Boost CONFIG REQUIRED\)/set(Boost_NO_BOOST_CMAKE ON)\nfind_package(Boost REQUIRED)/;
-            s/target_link_libraries(tket-c-api PRIVATE tket::tket Eigen3::Eigen)/target_link_libraries(tket-c-api PRIVATE tket::tket Boost::headers Eigen3::Eigen nlohmann_json::nlohmann_json symengine::symengine tkassert::tkassert tklog::tklog tkrng::tkrng tktokenswap::tktokenswap)/;
+            s/target_link_libraries(tket-c-api PRIVATE tket::tket Eigen3::Eigen)/target_link_libraries(tket-c-api PRIVATE tket::tket Boost::headers Eigen3::Eigen nlohmann_json::nlohmann_json symengine::symengine tkassert::tkassert tklog::tklog tkrng::tkrng tktokenswap::tktokenswap)\ntarget_include_directories(tket-c-api PRIVATE \"${Boost_INCLUDE_DIR}\")/;
         ' CMakeLists.txt
         mkdir build
         cd build
