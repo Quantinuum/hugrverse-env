@@ -280,13 +280,13 @@ echo "::group::Installing tket and tket-c-api ===="
 
     echo "::group::tket-c-api"
         cd "${SRC_DIR}/tket/tket-c-api"
-        # first patch cmakelists.txt to avoid gmp.
+        # first patch cmakelists.txt to avoid gmp, and to add the dependencies manually (as tket marks them private)
         sed -i.bak -E '
             /find_package\(gmp CONFIG\)/d;
             /if \(NOT gmp_FOUND\)/,/endif\(\)/d;
             /if \(NOT TARGET gmp::gmp\)/,/endif\(\)/d;
             /set(Boost_NO_BOOST_CMAKE ON)/d;
-            s/target_link_libraries(tket-c-api PRIVATE tket::tket Eigen3::Eigen)/target_link_libraries(tket-c-api PRIVATE tket::tket Eigen3::Eigen nlohmann_json::nlohmann_json symengine::symengine tkassert::tkassert tklog::tklog tkrng::tkrng tktokenswap::tktokenswap)/;
+            s/target_link_libraries(tket-c-api PRIVATE tket::tket Eigen3::Eigen)/target_link_libraries(tket-c-api PRIVATE tket::tket Boost::headers Eigen3::Eigen nlohmann_json::nlohmann_json symengine::symengine tkassert::tkassert tklog::tklog tkrng::tkrng tktokenswap::tktokenswap)/;
         ' CMakeLists.txt
         mkdir build
         cd build
