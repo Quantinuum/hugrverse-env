@@ -285,6 +285,8 @@ echo "::group::Installing tket and tket-c-api ===="
             /find_package\(gmp CONFIG\)/d;
             /if \(NOT gmp_FOUND\)/,/endif\(\)/d;
             /if \(NOT TARGET gmp::gmp\)/,/endif\(\)/d;
+            /set(Boost_NO_BOOST_CMAKE ON)/d;
+            s/target_link_libraries(tket-c-api PRIVATE tket::tket Eigen3::Eigen)/target_link_libraries(tket-c-api PRIVATE tket::tket Eigen3::Eigen nlohmann_json::nlohmann_json symengine::symengine tkassert::tkassert tklog::tklog tkrng::tkrng tktokenswap::tktokenswap)/;
         ' CMakeLists.txt
         mkdir build
         cd build
