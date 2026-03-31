@@ -104,7 +104,7 @@ jobs:
             -v "${{ github.workspace }}:/host" \
             quay.io/pypa/${{ matrix.platform }} \
             bash /host/deps/${{ matrix.dependency }}/${{ matrix.platform }}.sh \
-                 /host/hugrenv-${{ matrix.dependency }}-${{ matrix.platform }}.tar.gz
+                 '/host/hugrenv-${{ matrix.dependency }}-${{ matrix.platform }}.tar.gz'
 
       - name: Build natively
         if: ${{ !startsWith(matrix.platform, 'manylinux_') && steps.cache.outputs.cache-hit != 'true' }}
@@ -112,7 +112,7 @@ jobs:
         run: |
           bash \
             deps/${{ matrix.dependency }}/${{ matrix.platform }}.sh \
-            ${{ github.workspace }}/hugrenv-${{ matrix.dependency }}-${{ matrix.platform }}.tar.gz
+            '${{ github.workspace }}/hugrenv-${{ matrix.dependency }}-${{ matrix.platform }}.tar.gz'
 
       # Upload whether it came from cache or a fresh build.
       - name: Upload PR artifact
