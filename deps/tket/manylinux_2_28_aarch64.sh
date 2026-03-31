@@ -8,8 +8,10 @@ TAG_NLOHMANN_JSON="3.12.0"
 TAG_CATCH2="3.13.0"
 TAG_GMP="6.3.0"
 
+BASE_DIR=/tmp
+INSTALL_CHILD=hugrverse
+INSTALL_PREFIX="${BASE_DIR}/${INSTALL_CHILD}"
 SRC_DIR=/tmp/src
-INSTALL_PREFIX=/tmp/hugrverse
 OUTPUT_TARBALL="$1"
 
 CMAKE_BUILD_PARALLEL_LEVEL="$(nproc)"
@@ -244,5 +246,5 @@ echo "::group::Installing tket and tket-c-api ===="
 echo "::endgroup::"
 
 echo "::group::Compressing LLVM installation to output tarball"
-    tar -czvf "${OUTPUT_TARBALL}" ${INSTALL_PREFIX}
+    tar -czvf "${OUTPUT_TARBALL}" -C "${BASE_DIR}" "${INSTALL_CHILD}"
 echo "::endgroup::"

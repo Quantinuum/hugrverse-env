@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 # Build LLVM 21.1.8 from source for manylinux_2_28.
-# Installs to /opt/llvm.
 set -euo pipefail
 
 LLVM_VERSION="21.1.8"
 LLVM_TAG="llvmorg-${LLVM_VERSION}"
-INSTALL_PREFIX="/opt/llvm"
+BASE_DIR="/tmp"
+INSTALL_CHILD="hugrverse"
+INSTALL_PREFIX="${BASE_DIR}/${INSTALL_CHILD}"
 BUILD_DIR="/tmp/llvm-build"
-SOURCE_TARBALL="llvm-project-${LLVM_VERSION}.src.tar.xz"
-SOURCE_DIR="llvm-project-${LLVM_VERSION}.src"
+SOURCE_TARBALL="/tmp/llvm-project-${LLVM_VERSION}.src.tar.xz"
+SOURCE_DIR="/tmp/llvm-project-${LLVM_VERSION}.src"
 
 OUTPUT_TARBALL="$1"
 
@@ -59,5 +60,5 @@ echo "::endgroup::"
 
 
 echo "::group::Compressing LLVM installation to output tarball"
-    tar -czvf "${OUTPUT_TARBALL}" ${INSTALL_PREFIX}
+    tar -czvf "${OUTPUT_TARBALL}" -C "${BASE_DIR}" "${INSTALL_CHILD}"
 echo "::endgroup::"
