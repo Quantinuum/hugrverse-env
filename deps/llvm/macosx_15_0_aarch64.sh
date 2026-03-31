@@ -8,8 +8,8 @@ BASE_DIR="/tmp"
 INSTALL_CHILD="hugrverse"
 INSTALL_PREFIX="${BASE_DIR}/${INSTALL_CHILD}"
 BUILD_DIR="/tmp/llvm-build"
-SOURCE_TARBALL="/tmp/llvm-project-${LLVM_VERSION}.src.tar.xz"
-SOURCE_DIR="/tmp/llvm-project-${LLVM_VERSION}.src"
+SOURCE_TARBALL="llvm-project-${LLVM_VERSION}.src.tar.xz"
+SOURCE_DIR="llvm-project-${LLVM_VERSION}.src"
 
 OUTPUT_TARBALL="$1"
 
