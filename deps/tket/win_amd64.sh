@@ -91,11 +91,6 @@ echo "::group::Installing Dependencies"
             echo "Retrying installation (attempt $i)..."
             sleep 2
         done
-        # ensure boost/uuid/uuid.hpp exists (a later step sometimes fails to find it)
-        if ! [ -f "${INSTALL_PREFIX}/include/boost-1_90/boost/uuid/uuid.hpp" ]; then
-            echo "Error: boost/uuid/uuid.hpp not found in installed Boost headers. Check if Boost was installed correctly."
-            exit 1
-        fi
  
     echo "::endgroup::"
 

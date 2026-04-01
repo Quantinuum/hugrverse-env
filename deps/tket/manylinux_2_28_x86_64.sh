@@ -6,7 +6,6 @@ TAG_SYMENGINE="v0.14.0"
 TAG_EIGEN="5.0.1"
 TAG_NLOHMANN_JSON="3.12.0"
 TAG_CATCH2="3.13.0"
-TAG_GMP="6.3.0"
 
 BASE_DIR=/tmp
 INSTALL_CHILD=hugrverse
@@ -32,13 +31,6 @@ echo "::group::Downloading Sources"
     mkdir -p ${SRC_DIR}/boost
     curl -L https://github.com/boostorg/boost/releases/download/boost-${TAG_BOOST}/boost-${TAG_BOOST}-cmake.tar.xz \
         | tar --strip-components=1 -xJ -C ${SRC_DIR}/boost
-    echo "::endgroup::"
-
-    echo "::group::GMP @ ${TAG_GMP}"
-    mkdir -p ${SRC_DIR}/gmp
-    # Note: we use a mirror as the main gmp download site is routinely unresponsive
-    curl -L https://ftp.wayne.edu/gnu/gmp/gmp-${TAG_GMP}.tar.bz2 \
-        | tar --strip-components=1 -xj -C ${SRC_DIR}/gmp
     echo "::endgroup::"
 
     echo "::group::SymEngine @ ${TAG_SYMENGINE}"
@@ -80,13 +72,6 @@ echo "::group::Installing Dependencies"
         cmake --install .
     echo "::endgroup::"
 
-    echo "::group::gmp"
-        cd ${SRC_DIR}/gmp
-        ./configure --prefix=${INSTALL_PREFIX} --enable-cxx=yes
-        make -j$(nproc)
-        make install
-    echo "::endgroup::"
-
     echo "::group::symengine"
         cd ${SRC_DIR}/symengine
         sed -i -e 's/cmake_minimum_required(VERSION 2.8.12)/cmake_minimum_required(VERSION 3.5)/g' cmake/SymEngineConfig.cmake.in
@@ -98,6 +83,10 @@ echo "::group::Installing Dependencies"
             -DBUILD_TESTS=OFF \
             -DBUILD_BENCHMARKS=OFF \
             -DWITH_SYMENGINE_THREAD_SAFE=ON \
+            -DINTEGER_CLASS=boostmp \ # gmp builds causing issues, using boost for now
+            -DWITH_GMP=OFF \
+            -DWITH_MPFR=OFF \
+            -DCMAKE_INSTALL_MESSAGE=NEVER \ # prevents spamming of CI logs
             ..
         cmake --build .
         cmake --install .
@@ -231,6 +220,12 @@ echo "::group::Installing tket and tket-c-api ===="
 
     echo "::group::tket-c-api"
         cd "${SRC_DIR}/tket/tket-c-api"
+        # avoid gmp
+        sed -i.bak -E '
+            /find_package\(gmp CONFIG\)/d;
+            /if \(NOT gmp_FOUND\)/,/endif\(\)/d;
+            /if \(NOT TARGET gmp::gmp\)/,/endif\(\)/d;
+        ' CMakeLists.txt
         mkdir build
         cd build
         cmake \
