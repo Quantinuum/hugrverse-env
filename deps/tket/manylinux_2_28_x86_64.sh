@@ -67,6 +67,7 @@ echo "::group::Installing Dependencies"
         cmake \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
+            -DCMAKE_INSTALL_MESSAGE=NEVER \
             ..
         cmake --build .
         cmake --install .
@@ -77,16 +78,17 @@ echo "::group::Installing Dependencies"
         sed -i -e 's/cmake_minimum_required(VERSION 2.8.12)/cmake_minimum_required(VERSION 3.5)/g' cmake/SymEngineConfig.cmake.in
         mkdir build
         cd build
+        # note: we disable gmp and mpfr to avoid having to build them, and instead use boost's multiprecision
         cmake \
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DBUILD_TESTS=OFF \
             -DBUILD_BENCHMARKS=OFF \
             -DWITH_SYMENGINE_THREAD_SAFE=ON \
-            -DINTEGER_CLASS=boostmp \ # gmp builds causing issues, using boost for now
+            -DINTEGER_CLASS=boostmp \
             -DWITH_GMP=OFF \
             -DWITH_MPFR=OFF \
-            -DCMAKE_INSTALL_MESSAGE=NEVER \ # prevents spamming of CI logs
+            -DCMAKE_INSTALL_MESSAGE=NEVER \
             ..
         cmake --build .
         cmake --install .
