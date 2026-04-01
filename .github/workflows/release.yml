@@ -54,7 +54,6 @@ jobs:
         uses: dawidd6/action-download-artifact@v6
         with:
           workflow: merge.yml
-          branch: main
           name: main-${{ matrix.dependency }}-${{ matrix.platform }}
           path: dist/${{ matrix.dependency }}-${{ matrix.platform }}
           if_no_artifact_found: fail
