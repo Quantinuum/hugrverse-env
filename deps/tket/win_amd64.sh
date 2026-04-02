@@ -106,6 +106,7 @@ echo "::group::Installing Dependencies"
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
+            -DCMAKE_POLICY_DEFAULT_CMP0091=NEW \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DBUILD_TESTS=OFF \
@@ -130,6 +131,7 @@ echo "::group::Installing Dependencies"
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
+            -DCMAKE_POLICY_DEFAULT_CMP0091=NEW \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DEIGEN_BUILD_TESTING=OFF \
@@ -155,6 +157,7 @@ echo "::group::Installing Dependencies"
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
+            -DCMAKE_POLICY_DEFAULT_CMP0091=NEW \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DJSON_BuildTests=OFF \
@@ -174,6 +177,7 @@ echo "::group::Installing Dependencies"
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
+            -DCMAKE_POLICY_DEFAULT_CMP0091=NEW \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_INSTALL_MESSAGE=NEVER \
@@ -197,6 +201,7 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
+            -DCMAKE_POLICY_DEFAULT_CMP0091=NEW \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
@@ -215,6 +220,7 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
+            -DCMAKE_POLICY_DEFAULT_CMP0091=NEW \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
@@ -233,6 +239,7 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
+            -DCMAKE_POLICY_DEFAULT_CMP0091=NEW \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
@@ -251,6 +258,7 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
+            -DCMAKE_POLICY_DEFAULT_CMP0091=NEW \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
@@ -269,6 +277,7 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
+            -DCMAKE_POLICY_DEFAULT_CMP0091=NEW \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
@@ -287,6 +296,7 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
+            -DCMAKE_POLICY_DEFAULT_CMP0091=NEW \
             -DBUILD_SHARED_LIBS=ON \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
@@ -318,6 +328,7 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DBUILD_SHARED_LIBS=ON \
             -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
+            -DCMAKE_POLICY_DEFAULT_CMP0091=NEW \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
