@@ -288,8 +288,6 @@ echo "::group::Installing tket and tket-c-api ===="
 
     echo "::group::tket"
         cd "${SRC_DIR}/tket/tket"
-        # replace set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS yes) with set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS OFF) - it's flooding the export table and breaching limits
-        sed -i.bak -E 's/set\(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS yes\)/set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS OFF\)/g' CMakeLists.txt
         mkdir build
         cd build
         cmake \
@@ -299,7 +297,7 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
             -DCMAKE_POLICY_DEFAULT_CMP0091=NEW \
-            -DBUILD_SHARED_LIBS=ON \
+            -DBUILD_SHARED_LIBS=OFF \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
