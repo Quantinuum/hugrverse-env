@@ -156,7 +156,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
             ..
         cmake --build .
         cmake --install .
@@ -172,7 +171,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
             ..
         cmake --build .
         cmake --install .
@@ -188,7 +186,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
             ..
         cmake --build .
         cmake --install .
@@ -204,7 +201,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
             ..
         cmake --build .
         cmake --install .
@@ -220,7 +216,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
             ..
         cmake --build .
         cmake --install .
@@ -236,7 +231,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
             ..
         cmake --build .
         cmake --install .

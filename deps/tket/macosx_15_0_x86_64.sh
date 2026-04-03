@@ -86,10 +86,10 @@ echo "::group::Installing Dependencies"
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
+            -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_TESTS=OFF \
             -DBUILD_BENCHMARKS=OFF \
             -DWITH_SYMENGINE_THREAD_SAFE=ON \
-            -DBUILD_SHARED_LIBS=ON \
             -DINTEGER_CLASS=boostmp \
             -DWITH_GMP=OFF \
             -DWITH_MPFR=OFF \
@@ -157,7 +157,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
             ..
         cmake --build .
         cmake --install .
@@ -173,7 +172,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
             ..
         cmake --build .
         cmake --install .
@@ -189,7 +187,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
             ..
         cmake --build .
         cmake --install .
@@ -205,7 +202,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
             ..
         cmake --build .
         cmake --install .
@@ -221,7 +217,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
             ..
         cmake --build .
         cmake --install .
@@ -237,7 +232,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
-            -DBUILD_SHARED_LIBS=1 \
             ..
         cmake --build .
         cmake --install .
@@ -260,7 +254,6 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_SHARED_LIBS=1 \
-            -DCMAKE_SHARED_LINKER_FLAGS="-L${INSTALL_PREFIX}/lib -lsymengine" \
             ..
         cmake --build .
         cmake --install .
