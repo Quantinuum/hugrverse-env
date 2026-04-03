@@ -86,6 +86,7 @@ echo "::group::Installing Dependencies"
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
+            -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBUILD_TESTS=OFF \
             -DBUILD_BENCHMARKS=OFF \
             -DWITH_SYMENGINE_THREAD_SAFE=ON \
