@@ -65,10 +65,68 @@ jobs:
           name: bundle-${{ matrix.dependency }}-${{ matrix.platform }}
           path: dist/${{ matrix.dependency }}-${{ matrix.platform }}/*
 
-  release:
+  generate-lockfile:
     needs: collect
     runs-on: ubuntu-latest
+    steps:
+      - uses: cachix/install-nix-action@v16
+        with:
+          nix-path: nixpkgs=channel:nixos-unstable
 
+      - name: Download built artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: bundle-*
+          merge-multiple: true
+          path: dist
+
+      - name: Generate lockfile
+        shell: bash
+        run: |
+          set -euo pipefail
+          lockfile="dist/hugrenv.lock";
+          echo '{"version":"${{ inputs.version }}", "hashes":{}}' > "$lockfile";
+          for artifact in $dist/hugrenv-*.tar.gz; do
+            # extract the dependency, platform, arch from the filename
+            filename=$(basename "$artifact");
+            if [[ "$filename" =~ hugrenv-(.*)-(.*).tar.gz ]]; then
+              dependency="${BASH_REMATCH[1]}";
+              platform="${BASH_REMATCH[2]}";
+              # arch is x86_64, aarch64, or amd64.
+              # os is what preceeds the arch in the filename, e.g. manylinux_2_28_x86_64, macosx_11_0_aarch64, win_amd64.
+              if [[ "$platform" =~ (.*)_(x86_64|aarch64|amd64) ]]; then
+                os="${BASH_REMATCH[1]}";
+                arch="${BASH_REMATCH[2]}";
+              else
+                echo "Unexpected platform format: $platform" >&2;
+                exit 1;
+              fi
+            else
+              echo "Unexpected filename format: $filename" >&2;
+              exit 1;
+            fi;
+            hash=$(nix store prefetch-file --json --unpack file://${GITHUB_WORKSPACE}/${artifact} | jq -r .hash);
+            new_json=$(
+              jq \
+                --arg os "$os" \
+                --arg arch "$arch" \
+                --arg dependency "$dependency" \
+                --arg hash "$hash" \
+                '.hashes[$os][$arch][$dependency] = $hash' \
+                "$lockfile"
+            );
+            echo "${new_json}" > "$lockfile";
+          done;
+
+      - name: Upload lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-lockfile
+          path: dist/hugrenv.lock
+
+  release:
+    needs: [collect, generate-lockfile]
+    runs-on: ubuntu-latest
     steps:
       - name: Download bundle
         uses: actions/download-artifact@v4
