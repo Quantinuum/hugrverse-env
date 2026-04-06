@@ -100,7 +100,7 @@ jobs:
         if: ${{ startsWith(matrix.platform, 'macosx_') }}
         run: |
           target=$(echo "${{ matrix.platform }}" | cut -d_ -f2-3 | tr _ .)
-          echo "MACOSX_DEPLOYMENT_TARGET=${target}" >> $GITHUB_ENV
+          echo "MACOSX_DEPLOYMENT_TARGET=${target}" >> "$GITHUB_ENV"
 
       - name: Build inside container
         if: ${{ startsWith(matrix.platform, 'manylinux_') && steps.cache.outputs.cache-hit != 'true' }}
