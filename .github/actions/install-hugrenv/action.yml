@@ -7,7 +7,7 @@ inputs:
     required: false
     default: "llvm,tket"
   lockfile:
-    description: "Relative rath to the hugrenv.lock file (default: hugrenv.lock)"
+    description: "Relative path to the hugrenv.lock file (default: hugrenv.lock)"
     required: false
     default: "hugrenv.lock"
 
