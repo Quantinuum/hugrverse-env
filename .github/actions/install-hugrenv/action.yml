@@ -1,5 +1,5 @@
-name: Get the hugrenv version used in this branch
-description: Reads the local hugrenv.lock to extract the version field
+name: Install hugrenv packages from hugrenv.lock
+description: Reads the local hugrenv.lock to determine the version, downloads and installs the requested hugrenv packages for the current platform, and sets environment variables for subsequent steps
 
 inputs:
   packages:
