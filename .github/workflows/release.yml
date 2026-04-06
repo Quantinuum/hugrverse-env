@@ -86,7 +86,7 @@ jobs:
           set -euo pipefail
           lockfile="dist/hugrenv.lock";
           echo '{"version":"${{ inputs.version }}", "hashes":{}}' > "$lockfile";
-          for artifact in $dist/hugrenv-*.tar.gz; do
+          for artifact in dist/hugrenv-*.tar.gz; do
             # extract the dependency, platform, arch from the filename
             filename=$(basename "$artifact");
             if [[ "$filename" =~ hugrenv-(.*)-(.*).tar.gz ]]; then
