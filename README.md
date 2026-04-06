@@ -21,8 +21,8 @@ from scratch.
 |---------------------------|-------------------------------|----------------|
 | `manylinux_2_28_x86_64`   | Docker `quay.io/pypa/manylinux_2_28_x86_64` on `ubuntu-latest` | `.tar.gz` |
 | `manylinux_2_28_aarch64`  | Docker `quay.io/pypa/manylinux_2_28_aarch64` on `ubuntu-24.04-arm` | `.tar.gz` |
-| `macosx_15_0_arm64`       | `macos-15`                    | `.tar.gz` |
-| `macosx_15_0_x86_64`      | `macos-15-intel`              | `.tar.gz` |
+| `macosx_11_0_aarch64`     | `macos-14`                    | `.tar.gz` |
+| `macosx_11_0_x86_64`      | `macos-15-intel`              | `.tar.gz` |
 | `win_amd64`               | `windows-latest` + MSVC       | `.zip` |
 
 ## Repository layout

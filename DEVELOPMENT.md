@@ -77,10 +77,10 @@ macOS build scripts run natively; no Docker is needed.
 
 ```bash
 # ARM64
-bash builds/macosx_15_0_arm64/build.sh /tmp/hugrverse_env_macosx_15_0_arm64.tar.gz
+bash builds/macosx_11_0_arm64/build.sh /tmp/hugrverse_env_macosx_11_0_arm64.tar.gz
 
 # x86_64 (Intel Mac)
-bash builds/macosx_15_0_x86_64/build.sh /tmp/hugrverse_env_macosx_15_0_x86_64.tar.gz
+bash builds/macosx_11_0_x86_64/build.sh /tmp/hugrverse_env_macosx_11_0_x86_64.tar.gz
 ```
 
 The scripts will install any missing dependencies via Homebrew.
