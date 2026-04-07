@@ -45,7 +45,7 @@ can verify what they download.
 
 ### 2. Install hugrenv packages in GitHub Actions
 
-Use the `.github/actions/install-hugrenv` composite action from this
+Use the `install-hugrenv-action` composite action from this
 repository. It reads your committed `hugrenv.lock`, detects the current runner
 platform, downloads the requested packages from the matching release, extracts
 them, and sets the relevant environment variables (`LLVM_SYS_211_PREFIX`,
@@ -54,7 +54,7 @@ them, and sets the relevant environment variables (`LLVM_SYS_211_PREFIX`,
 
 ```yaml
 - name: Install hugrenv
-  uses: Quantinuum/hugrverse-env/.github/actions/install-hugrenv@main
+  uses: Quantinuum/hugrverse-env/install-hugrenv-action@main
   with:
     packages: llvm,tket   # comma-separated; defaults to "llvm,tket"
     lockfile: hugrenv.lock  # relative path to your lock file; default is "hugrenv.lock"
@@ -62,35 +62,6 @@ them, and sets the relevant environment variables (`LLVM_SYS_211_PREFIX`,
 
 The action supports all five platforms listed above and works on Linux, macOS,
 and Windows runners without any additional setup.
-
-## Repository layout
-
-```
-deps/
-  llvm/
-    manylinux_2_28_x86_64.sh   # Builds LLVM for each platform
-    manylinux_2_28_aarch64.sh
-    macosx_11_0_aarch64.sh
-    macosx_11_0_x86_64.sh
-    win_amd64.sh
-  tket/
-    manylinux_2_28_x86_64.sh   # Builds tket + C API for each platform
-    manylinux_2_28_aarch64.sh
-    macosx_11_0_aarch64.sh
-    macosx_11_0_x86_64.sh
-    win_amd64.sh
-docker/
-  manylinux_2_28_x86_64.Dockerfile   # Local-testing image for x86_64 Linux
-  manylinux_2_28_aarch64.Dockerfile  # Local-testing image for AArch64 Linux
-.github/
-  actions/
-    install-hugrenv/
-      action.yml    # Composite action: reads lock file, downloads & installs packages
-  workflows/
-    build.yml       # Builds changed targets on PRs; uploads artifacts
-    merge.yml       # Promotes merged-PR artifacts to main-* on merge to main
-    release.yml     # Bundles main-* artifacts, generates hugrenv.lock, publishes release
-```
 
 ## How CI works
 
