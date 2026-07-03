@@ -217,7 +217,9 @@ echo "::group::Installing tket and tket-c-api ===="
 
     # Emscripten's clang rejects the empty-brace initialisation of the
     # `parents_neighbours` map value in tket 2.16.0. Spell out the pair type.
-    # (see https://github.com/Quantinuum/tket/compare/main...jpacold:tket:emscripten)
+    # 
+    # TODO: Remove when the fix is merged into a tket release (>= 2.1.91).
+    # See <https://github.com/Quantinuum/tket/pull/2204>
     sed -i.bak -E \
         's/parents_neighbours\[vert\] = \{\};/parents_neighbours[vert] = std::pair<unsigned int, unsigned int>{};/' \
         "${SRC_DIR}/tket/tket/src/ArchAwareSynth/Path.cpp"
