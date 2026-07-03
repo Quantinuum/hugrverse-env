@@ -54,6 +54,7 @@ jobs:
               macosx_11_0_aarch64)    runs_on="macos-14" ;;
               macosx_11_0_x86_64)     runs_on="macos-15-intel" ;;
               win_amd64)              runs_on="windows-latest" ;;
+              emscripten_wasm32)      runs_on="ubuntu-latest" ;;
               *) echo "Unknown platform: $platform" >&2; exit 1 ;;
             esac
 

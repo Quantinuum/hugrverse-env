@@ -10,6 +10,13 @@ inputs:
     description: "Relative path to the hugrenv.lock file (default: hugrenv.lock)"
     required: false
     default: "hugrenv.lock"
+  target:
+    description: >-
+      Override the auto-detected platform target (e.g. `emscripten_wasm32` to
+      fetch the WebAssembly/Emscripten build on a Linux runner). When empty,
+      the target is detected from the current runner's OS and architecture.
+    required: false
+    default: ""
 
 runs:
   using: composite
@@ -39,8 +46,19 @@ runs:
         # | macos   | aarch64      || macosx_11_0_aarch64    | /tmp/hugrverse  |
         # | windows | x86_64       || win_amd64              | C:\hugrverse    |
         # +---------+--------------++------------------------+-----------------+
+        #
+        # The `target` input can override this detection (e.g. `emscripten_wasm32`
+        # to fetch the WebAssembly build on a Linux runner when cross-compiling).
+        override_target="${{ inputs.target }}";
         os="$(uname -s | tr '[:upper:]' '[:lower:]')";
         arch="$(uname -m)";
+        if [[ -n "$override_target" ]]; then
+          target="$override_target";
+          case $os in
+            msys*|cygwin*|mingw*|win*) install_path="C:\\hugrverse";;
+            *) install_path="/tmp/hugrverse";;
+          esac
+        else
         case $os in
           linux)
             install_path="/tmp/hugrverse";
@@ -78,6 +96,7 @@ runs:
             exit 1;
             ;;
         esac
+        fi
         echo "HUGRENV_TARGET=${target}" >> $GITHUB_ENV;
         echo "HUGRENV_PATH=${install_path}" >> $GITHUB_ENV;
 
@@ -130,6 +149,12 @@ runs:
             echo "${HUGRENV_PATH}\\lib" >> $GITHUB_PATH;
             echo "${HUGRENV_PATH}\\lib64" >> $GITHUB_PATH;
             echo "${HUGRENV_PATH}\\bin" >> $GITHUB_PATH;
+            ;;
+          emscripten*)
+            # The Emscripten build ships only static archives (`.a`), which are
+            # linked directly into the wasm module at build time. There are no
+            # shared libraries to add to a runtime search path.
+            echo "Emscripten target: no dynamic library paths to set.";
             ;;
         esac;
 

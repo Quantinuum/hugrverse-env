@@ -31,6 +31,7 @@ archive.
 | `macosx_11_0_aarch64`     | `macos-14`                                                      | `MACOSX_DEPLOYMENT_TARGET=11.0` |
 | `macosx_11_0_x86_64`      | `macos-15-intel`                                                | `MACOSX_DEPLOYMENT_TARGET=11.0` |
 | `win_amd64`               | `windows-latest` + MSVC                                         | |
+| `emscripten_wasm32`       | `ubuntu-latest` + Emscripten SDK                               | WebAssembly/[Pyodide](https://pyodide.org) target (`wasm32-unknown-emscripten`). Currently only the `tket` package is built. |
 
 ## Using hugrverse-env in your repository
 
@@ -62,6 +63,33 @@ them, and sets the relevant environment variables (`LLVM_SYS_211_PREFIX`,
 
 The action supports all five platforms listed above and works on Linux, macOS,
 and Windows runners without any additional setup.
+
+### WebAssembly / Emscripten (`wasm32-unknown-emscripten`)
+
+The `emscripten_wasm32` target provides a static build of the tket C API and its
+C++ dependencies for use when cross-compiling WebAssembly/[Pyodide](https://pyodide.org)
+wheels (e.g. tket2 wheels for the `wasm32-unknown-emscripten` Rust target).
+
+- Everything is built **statically** (`.a` archives) with the Emscripten
+  toolchain and merged into a single self-contained `libtket-c-api.a`, so
+  downstream builds link against just `-ltket-c-api`.
+- The Emscripten version is pinned to match the
+  [`pyemscripten_2026_0`](https://pyodide.org/en/stable/development/abi.html)
+  platform (Python 3.14): **Emscripten 5.0.3**.
+- Only the `tket` package is published for this target (there is no `llvm`
+  build for wasm).
+
+Because this is a cross-compilation target, it is not auto-detected from the
+runner. Request it explicitly with the `target` input, typically on a Linux
+runner:
+
+```yaml
+- name: Install hugrenv (wasm)
+  uses: Quantinuum/hugrverse-env/install-hugrenv-action@main
+  with:
+    packages: tket
+    target: emscripten_wasm32
+```
 
 ## How CI works
 

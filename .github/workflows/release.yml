@@ -94,7 +94,7 @@ jobs:
               platform="${BASH_REMATCH[2]}";
               # arch is x86_64, aarch64, or amd64.
               # os is what preceeds the arch in the filename, e.g. manylinux_2_28_x86_64, macosx_11_0_aarch64, win_amd64.
-              if [[ "$platform" =~ (.*)_(x86_64|aarch64|amd64) ]]; then
+              if [[ "$platform" =~ (.*)_(x86_64|aarch64|amd64|wasm32) ]]; then
                 os="${BASH_REMATCH[1]}";
                 arch="${BASH_REMATCH[2]}";
               else
