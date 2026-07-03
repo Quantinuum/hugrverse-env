@@ -173,7 +173,18 @@ echo "::group::Installing Dependencies"
         cd ${SRC_DIR}/eigen
         mkdir build
         cd build
+        # tket consumes Eigen header-only (the `Eigen3::Eigen` interface target),
+        # so we only need the headers and the CMake package config. Disable the
+        # bundled BLAS/LAPACK builds: they compile the reference Fortran sources
+        # and would otherwise require a Fortran compiler (unavailable under
+        # Emscripten).
         emcmake_configure \
+            -DEIGEN_BUILD_BLAS=OFF \
+            -DEIGEN_BUILD_LAPACK=OFF \
+            -DEIGEN_BUILD_TESTING=OFF \
+            -DEIGEN_BUILD_DEMOS=OFF \
+            -DEIGEN_BUILD_DOC=OFF \
+            -DBUILD_TESTING=OFF \
             ..
         cmake --build .
         cmake --install .
