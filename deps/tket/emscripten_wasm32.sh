@@ -12,7 +12,7 @@ set -evu
 # individual archives are merged into a single `libtket-c-api.a` so that
 # downstream consumers can keep linking against just `-ltket-c-api`.
 
-TAG_TKET="2.16.0"
+TAG_TKET="2.18.1"
 TAG_BOOST="1.90.0"
 TAG_SYMENGINE="v0.14.0"
 TAG_EIGEN="5.0.1"
@@ -214,15 +214,6 @@ echo "::group::Installing Dependencies"
 
 echo "::endgroup::"
 echo "::group::Installing tket and tket-c-api ===="
-
-    # Emscripten's clang rejects the empty-brace initialisation of the
-    # `parents_neighbours` map value in tket 2.16.0. Spell out the pair type.
-    # 
-    # TODO: Remove when the fix is merged into a tket release (>= 2.1.91).
-    # See <https://github.com/Quantinuum/tket/pull/2204>
-    sed -i.bak -E \
-        's/parents_neighbours\[vert\] = \{\};/parents_neighbours[vert] = std::pair<unsigned int, unsigned int>{};/' \
-        "${SRC_DIR}/tket/tket/src/ArchAwareSynth/Path.cpp"
 
     # tket's CMake files append `-Werror` after our own `CMAKE_CXX_FLAGS`, so our
     # `-Wno-error` gets overridden. Emscripten's clang is stricter than the
