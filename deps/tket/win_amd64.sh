@@ -7,7 +7,15 @@ TAG_EIGEN="5.0.1"
 TAG_NLOHMANN_JSON="3.12.0"
 TAG_CATCH2="3.13.0"
 
-BASE_DIR=/tmp
+# /tmp resolves to a Windows 8.3 short path (C:\Users\RUNNER~1\...). CMake expands
+# short components in get_filename_component(... ABSOLUTE) but not in
+# CMAKE_CURRENT_SOURCE_DIR, so Boost's install rules see two different spellings of
+# its own include dir, skip the BUILD_INTERFACE/INSTALL_INTERFACE rewrite, and
+# install(EXPORT) then fails with "which is prefixed in the source directory".
+BASE_DIR="$(cygpath -u "$(cygpath -w -l /tmp)")"
+case "${BASE_DIR}" in
+    *~*) echo "error: could not resolve /tmp to a long-form path: ${BASE_DIR}" >&2; exit 1 ;;
+esac
 SRC_CHILD=src
 INSTALL_CHILD=hugrverse
 SRC_DIR="${BASE_DIR}/${SRC_CHILD}"
@@ -28,6 +36,7 @@ echo "::group::Debug"
     echo "which cmake: $(which cmake)"
     echo "which cl: $(which cl)"
     echo "which c++: $(which c++)"
+    echo "base dir: ${BASE_DIR}"
 echo "::endgroup::"
 
 echo "::group::Downloading Sources"
