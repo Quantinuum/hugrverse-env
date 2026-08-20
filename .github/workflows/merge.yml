@@ -4,10 +4,16 @@ on:
   pull_request_target:
     types: [closed]
     branches: [main]
+  # A manual Build run rebuilds every target. Promote its outputs once the
+  # build succeeds so Release can use them as the new main artifacts.
+  workflow_run:
+    workflows: [Build]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
     inputs:
       head_sha:
-        description: PR head SHA to promote artifacts for
+        description: PR head SHA or manually built commit SHA to promote
         required: true
         type: string
 
@@ -17,7 +23,12 @@ permissions:
 
 jobs:
   plan:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true }}
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.pull_request.merged == true ||
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'workflow_dispatch')
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
@@ -30,6 +41,8 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "head_sha=${{ inputs.head_sha }}" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.event_name }}" == "workflow_run" ]]; then
+            echo "head_sha=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
           else
             echo "head_sha=${{ github.event.pull_request.head.sha }}" >> "$GITHUB_OUTPUT"
           fi
@@ -84,7 +97,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download PR artifact
+      - name: Download build artifact
         uses: dawidd6/action-download-artifact@v6
         with:
           workflow: build.yml
