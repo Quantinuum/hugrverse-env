@@ -42,10 +42,8 @@ echo "::group::Downloading Sources"
     mkdir -p ${SRC_DIR}/boost
     curl -L https://github.com/boostorg/boost/releases/download/boost-${TAG_BOOST}/boost-${TAG_BOOST}-cmake.tar.xz \
         | tar --strip-components=1 -xJ -C ${SRC_DIR}/boost
-    sed -i \
-        -e 's|target_include_directories(boost_${name} PUBLIC include)|target_include_directories(boost_${name} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>" "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")|' \
-        -e 's|target_include_directories(boost_${name} INTERFACE include)|target_include_directories(boost_${name} INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>" "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")|' \
-        ${SRC_DIR}/boost/libs/test/CMakeLists.txt
+    sed -i '/export(TARGETS ${LIB} NAMESPACE Boost:: FILE export\\/${LIB}-targets.cmake)/d' \
+        ${SRC_DIR}/boost/tools/cmake/include/BoostInstall.cmake
     echo "::endgroup::"
 
     echo "::group::SymEngine @ ${TAG_SYMENGINE}"
