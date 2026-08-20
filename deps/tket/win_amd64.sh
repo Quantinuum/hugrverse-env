@@ -42,7 +42,7 @@ echo "::group::Downloading Sources"
     mkdir -p ${SRC_DIR}/boost
     curl -L https://github.com/boostorg/boost/releases/download/boost-${TAG_BOOST}/boost-${TAG_BOOST}-cmake.tar.xz \
         | tar --strip-components=1 -xJ -C ${SRC_DIR}/boost
-    sed -i '/export(TARGETS ${LIB} NAMESPACE Boost:: FILE export\\/${LIB}-targets.cmake)/d' \
+    sed -i '\|export(TARGETS ${LIB} NAMESPACE Boost:: FILE export/${LIB}-targets.cmake)|d' \
         ${SRC_DIR}/boost/tools/cmake/include/BoostInstall.cmake
     echo "::endgroup::"
 
