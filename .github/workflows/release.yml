@@ -36,7 +36,12 @@ jobs:
             [[ -n "$script" ]] || continue
             dep=$(cut -d/ -f2 <<<"$script")
             platform=$(basename "$script" .sh)
-            rows+=("{\"dependency\":\"$dep\",\"platform\":\"$platform\"}")
+            if [[ "$platform" == "emscripten_wasm32" ]]; then
+              rows+=("{\"dependency\":\"$dep\",\"platform\":\"emscripten_4_0_9_wasm32\"}")
+              rows+=("{\"dependency\":\"$dep\",\"platform\":\"emscripten_5_0_3_wasm32\"}")
+            else
+              rows+=("{\"dependency\":\"$dep\",\"platform\":\"$platform\"}")
+            fi
           done < <(find deps -mindepth 2 -maxdepth 2 -type f -name '*.sh' | sort)
 
           matrix=$(printf '%s\n' "${rows[@]}" | sort -u | jq -sc '{include: .}')
@@ -94,7 +99,7 @@ jobs:
               platform="${BASH_REMATCH[2]}";
               # arch is x86_64, aarch64, or amd64.
               # os is what preceeds the arch in the filename, e.g. manylinux_2_28_x86_64, macosx_11_0_aarch64, win_amd64.
-              if [[ "$platform" =~ (.*)_(x86_64|aarch64|amd64) ]]; then
+              if [[ "$platform" =~ (.*)_(x86_64|aarch64|amd64|wasm32) ]]; then
                 os="${BASH_REMATCH[1]}";
                 arch="${BASH_REMATCH[2]}";
               else

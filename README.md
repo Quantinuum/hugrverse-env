@@ -31,6 +31,8 @@ archive.
 | `macosx_11_0_aarch64`     | `macos-14`                                                      | `MACOSX_DEPLOYMENT_TARGET=11.0` |
 | `macosx_11_0_x86_64`      | `macos-15-intel`                                                | `MACOSX_DEPLOYMENT_TARGET=11.0` |
 | `win_amd64`               | `windows-latest` + MSVC                                         | |
+| `emscripten_4_0_9_wasm32` | `ubuntu-latest` + Emscripten SDK 4.0.9                         | WebAssembly target for Pyodide's [`pyemscripten_2025_0`](https://pyodide.org/en/stable/development/abi/313.html) platform. Currently only the `tket` package is built. |
+| `emscripten_5_0_3_wasm32` | `ubuntu-latest` + Emscripten SDK 5.0.3                         | WebAssembly target for Pyodide's [`pyemscripten_2026_0`](https://pyodide.org/en/stable/development/abi/314.html) platform (Python 3.14). Currently only the `tket` package is built. |
 
 ## Using hugrverse-env in your repository
 
@@ -60,8 +62,19 @@ them, and sets the relevant environment variables (`LLVM_SYS_211_PREFIX`,
     lockfile: hugrenv.lock  # relative path to your lock file; default is "hugrenv.lock"
 ```
 
-The action supports all five platforms listed above and works on Linux, macOS,
+The action supports all platforms listed above and works on Linux, macOS,
 and Windows runners without any additional setup.
+
+The platform tag is detected automatically from the runner, but you can override it with the `target` input (e.g. cross-compiling for WebAssembly).
+
+```yaml
+- name: Install hugrenv (wasm)
+  uses: Quantinuum/hugrverse-env/install-hugrenv-action@main
+  with:
+    packages: tket
+    # Use emscripten_4_0_9_wasm32 for pyemscripten_2025_0.
+    target: emscripten_5_0_3_wasm32
+```
 
 ## How CI works
 
