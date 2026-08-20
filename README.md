@@ -81,6 +81,8 @@ The platform tag is detected automatically from the runner, but you can override
 1. **Build** (`build.yml`) — triggered on pull requests and manually via
    `workflow_dispatch`.
    * On a PR, only scripts that changed since the base commit are built.
+   * A manual run rebuilds every target. After it succeeds, `merge.yml`
+     automatically promotes the fresh artifacts for the next release.
    * Linux targets are built inside the official `quay.io/pypa/manylinux_2_28_*`
      Docker images to ensure manylinux binary compatibility.
    * macOS targets run natively; `MACOSX_DEPLOYMENT_TARGET` is set to `11.0`.
@@ -88,8 +90,9 @@ The platform tag is detected automatically from the runner, but you can override
    * Each built archive is uploaded as a PR artifact named
      `pr-<head-sha>-<dep>-<platform>`.
 
-2. **Merge** (`merge.yml`) — triggered when a PR is merged to `main`.
-   * Finds the PR build artifacts by head SHA and re-uploads them as
+2. **Merge** (`merge.yml`) — triggered when a PR is merged to `main`, and called
+   as a reusable workflow by a successful manually dispatched full build.
+   * Finds the build artifacts by commit SHA and re-uploads them as
      `main-<dep>-<platform>` artifacts (retained 90 days).
 
 3. **Release** (`release.yml`) — triggered manually via `workflow_dispatch`.

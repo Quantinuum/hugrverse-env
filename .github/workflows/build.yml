@@ -17,7 +17,7 @@ jobs:
       count: ${{ steps.plan.outputs.count }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -93,13 +93,13 @@ jobs:
       matrix: ${{ fromJson(needs.plan.outputs.matrix) }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # Cache key is per target and per script content.
       # Changing tket/windows does not invalidate llvm/macos.
       - name: Restore cached build
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: hugrenv-${{ matrix.dependency }}-${{ matrix.platform }}.tar.gz
           key: ${{ matrix.dependency }}-${{ matrix.platform }}-${{ hashFiles(format('deps/{0}/{1}.sh', matrix.dependency, matrix.script_target)) }}
@@ -134,9 +134,11 @@ jobs:
             '${{ matrix.emscripten_version }}'
 
       # Upload whether it came from cache or a fresh build.
-      - name: Upload PR artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v6
         with:
-          name: pr-${{ github.event.pull_request.head.sha }}-${{ matrix.dependency }}-${{ matrix.platform }}
+          # PR builds use the PR head SHA. A manual full rebuild has no
+          # pull_request payload, so identify it by the checked-out commit.
+          name: pr-${{ github.event.pull_request.head.sha || github.sha }}-${{ matrix.dependency }}-${{ matrix.platform }}
           path: hugrenv-${{ matrix.dependency }}-${{ matrix.platform }}.tar.gz
           retention-days: 30
