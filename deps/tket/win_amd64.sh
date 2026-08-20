@@ -42,6 +42,10 @@ echo "::group::Downloading Sources"
     mkdir -p ${SRC_DIR}/boost
     curl -L https://github.com/boostorg/boost/releases/download/boost-${TAG_BOOST}/boost-${TAG_BOOST}-cmake.tar.xz \
         | tar --strip-components=1 -xJ -C ${SRC_DIR}/boost
+    sed -i \
+        -e 's|target_include_directories(boost_${name} PUBLIC include)|target_include_directories(boost_${name} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>" "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")|' \
+        -e 's|target_include_directories(boost_${name} INTERFACE include)|target_include_directories(boost_${name} INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>" "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")|' \
+        ${SRC_DIR}/boost/libs/test/CMakeLists.txt
     echo "::endgroup::"
 
     echo "::group::SymEngine @ ${TAG_SYMENGINE}"
@@ -80,7 +84,6 @@ echo "::group::Installing Dependencies"
             -DCMAKE_PREFIX_PATH=${INSTALL_PREFIX} \
             -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL \
             -DCMAKE_POLICY_DEFAULT_CMP0091=NEW \
-            -DCMAKE_POLICY_VERSION_MINIMUM=3.31 \
             -DCMAKE_CXX_STANDARD=14 \
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_INSTALL_MESSAGE=NEVER \
