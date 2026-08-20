@@ -112,6 +112,18 @@ bash deps/tket/win_amd64.sh /tmp/hugrenv-tket-win_amd64.tar.gz
 > sourcing
 > `"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"`.
 
+## Emscripten builds
+
+The tket Emscripten recipe takes the output archive followed by the SDK
+version. CI invokes it once for each supported version:
+
+```bash
+bash deps/tket/emscripten_wasm32.sh \
+  /tmp/hugrenv-tket-emscripten_4_0_9_wasm32.tar.gz 4.0.9
+bash deps/tket/emscripten_wasm32.sh \
+  /tmp/hugrenv-tket-emscripten_5_0_3_wasm32.tar.gz 5.0.3
+```
+
 ## Adding a new dependency
 
 1. Create a `deps/<dependency>/` directory with a `<platform>.sh` script for

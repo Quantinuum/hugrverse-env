@@ -3,9 +3,11 @@ set -evu
 # Builds the tket C API and its C++ dependencies for the Emscripten/WebAssembly
 # target (`wasm32-unknown-emscripten`).
 #
-# The output is consumed when building `wasm32-unknown-emscripten` Python wheels
-# for tket2 (Pyodide / PyEmscripten). We pin Emscripten to the version used by
-# the `pyemscripten_2026_0` platform (Python 3.14):
+# The output is consumed when building `wasm32-unknown-emscripten` Python
+# wheels for tket2 (Pyodide / PyEmscripten). The Emscripten version is supplied
+# by CI so builds compatible with both the `pyemscripten_2025_0` platform
+# (Emscripten 4.0.9) and the `pyemscripten_2026_0` platform (Emscripten 5.0.3)
+# can be published. See Pyodide's platform ABI table:
 #   https://pyodide.org/en/stable/development/abi.html
 #
 # Unlike the native targets, everything is built as a *static* library and the
@@ -19,8 +21,9 @@ TAG_EIGEN="5.0.1"
 TAG_NLOHMANN_JSON="3.12.0"
 TAG_CATCH2="3.13.0"
 
-# Emscripten version matching the `pyemscripten_2026_0` platform (Python 3.14).
-TAG_EMSCRIPTEN="5.0.3"
+# Keep this explicit: Emscripten's static libraries are tied to the SDK ABI and
+# must be built with the same version as their downstream consumer.
+TAG_EMSCRIPTEN="${2:?Usage: $0 OUTPUT_TARBALL EMSCRIPTEN_VERSION}"
 
 BASE_DIR=/tmp
 INSTALL_CHILD=hugrverse

@@ -12,8 +12,9 @@ inputs:
     default: "hugrenv.lock"
   target:
     description: >-
-      Override the auto-detected platform target (e.g. `emscripten_wasm32` to
-      fetch the WebAssembly/Emscripten build on a Linux runner). When empty,
+      Override the auto-detected platform target (e.g.
+      `emscripten_4_0_9_wasm32` or `emscripten_5_0_3_wasm32` to fetch a
+      versioned WebAssembly/Emscripten build on a Linux runner). When empty,
       the target is detected from the current runner's OS and architecture.
     required: false
     default: ""
@@ -47,8 +48,8 @@ runs:
         # | windows | x86_64       || win_amd64              | C:\hugrverse    |
         # +---------+--------------++------------------------+-----------------+
         #
-        # The `target` input can override this detection (e.g. `emscripten_wasm32`
-        # to fetch the WebAssembly build on a Linux runner when cross-compiling).
+        # The `target` input can override this detection (e.g. a versioned
+        # Emscripten target when cross-compiling on a Linux runner).
         override_target="${{ inputs.target }}";
         os="$(uname -s | tr '[:upper:]' '[:lower:]')";
         arch="$(uname -m)";
@@ -157,4 +158,3 @@ runs:
             echo "Emscripten target: no dynamic library paths to set.";
             ;;
         esac;
-
