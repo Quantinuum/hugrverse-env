@@ -1,7 +1,7 @@
 set -evu
 
 TAG_TKET="2.16.0"
-TAG_BOOST="1.90.0"
+TAG_BOOST="1.87.0"
 TAG_SYMENGINE="v0.14.0"
 TAG_EIGEN="5.0.1"
 TAG_NLOHMANN_JSON="3.12.0"
@@ -318,7 +318,7 @@ echo "::group::Installing tket and tket-c-api ===="
         printf '\n# Injected by hugrverse-env\n' >> CMakeLists.txt
         printf '# Link against the dependencies manually, as tket marks them private\n' >> CMakeLists.txt
         printf 'target_link_libraries(tket-c-api PRIVATE Boost::headers nlohmann_json::nlohmann_json symengine::symengine tkassert::tkassert tklog::tklog tkrng::tkrng tktokenswap::tktokenswap)\n' >> CMakeLists.txt
-        printf 'target_include_directories(tket-c-api PRIVATE "%s")\n' "${INSTALL_PREFIX}/include/boost-1_90" >> CMakeLists.txt
+        printf 'target_include_directories(tket-c-api PRIVATE "%s")\n' "${INSTALL_PREFIX}/include/boost-1_87" >> CMakeLists.txt
         mkdir build
         cd build
         cmake \
@@ -333,8 +333,8 @@ echo "::group::Installing tket and tket-c-api ===="
             -DCMAKE_CXX_STANDARD_REQUIRED=ON \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
             -DBoost_ROOT=${INSTALL_PREFIX} \
-            -DBoost_INCLUDE_DIR=${INSTALL_PREFIX}/include/boost-1_90 \
-            -DBoost_DIR=${INSTALL_PREFIX}/lib/cmake/Boost-1.90.0 \
+            -DBoost_INCLUDE_DIR=${INSTALL_PREFIX}/include/boost-1_87 \
+            -DBoost_DIR=${INSTALL_PREFIX}/lib/cmake/Boost-1.87.0 \
             ..
         cmake --build . --config Release
         cmake --install . --config Release
