@@ -110,7 +110,7 @@ runs:
         for package in ${packages//,/ }; do
           echo "Downloading package $package";
           url="https://github.com/Quantinuum/hugrverse-env/releases/download/v${HUGRENV_VERSION}/hugrenv-${package}-${HUGRENV_TARGET}.tar.gz";
-          curl -L "$url" | tar -xzf - -C ${HUGRENV_PATH} --strip-components=1;
+          curl -L "$url" | tee >(shasum -a 256) | tar -xzf - -C ${HUGRENV_PATH} --strip-components=1;
         done;
 
     - name: Set environment variables
