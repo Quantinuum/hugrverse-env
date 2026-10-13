@@ -122,8 +122,11 @@ bash deps/tket/win_amd64.sh /tmp/hugrenv-tket-win_amd64.tar.gz
 > sourcing
 > `"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"`.
 
-The additional MinGW builds use GCC from `C:/mingw64`, matching the compiler
-provided by GitHub's Windows runner. Run them from Git Bash; they set their
+The additional MinGW builds use the distribution pinned in
+`mingw-toolchain.json`. CI downloads and checks that archive, then sets
+`MINGW_ROOT` to its extracted `mingw64` directory. For a local Windows build,
+install that same archive and set `MINGW_ROOT` if it isn't at `C:/mingw64`.
+Run the recipes from Git Bash; they set their
 compiler paths explicitly and don't require the MSVC environment:
 
 ```bash

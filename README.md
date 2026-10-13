@@ -31,7 +31,7 @@ archive.
 | `macosx_11_0_aarch64`     | `macos-14`                                                      | `MACOSX_DEPLOYMENT_TARGET=11.0` |
 | `macosx_11_0_x86_64`      | `macos-15-intel`                                                | `MACOSX_DEPLOYMENT_TARGET=11.0` |
 | `win_amd64`               | `windows-latest` + MSVC                                         | |
-| `win_mingw_amd64`         | `windows-latest` + MinGW GCC                                    | Separate GNU ABI builds of LLVM and tket, including their MinGW runtime DLLs |
+| `win_mingw_amd64`         | `windows-latest` + pinned MinGW GCC 14.2.0                       | Separate GNU ABI builds of LLVM and tket, including their MinGW runtime DLLs |
 | `emscripten_4_0_9_wasm32` | `ubuntu-latest` + Emscripten SDK 4.0.9                         | WebAssembly target for Pyodide's [`pyemscripten_2025_0`](https://pyodide.org/en/stable/development/abi/313.html) platform. Currently only the `tket` package is built. |
 | `emscripten_5_0_3_wasm32` | `ubuntu-latest` + Emscripten SDK 5.0.3                         | WebAssembly target for Pyodide's [`pyemscripten_2026_0`](https://pyodide.org/en/stable/development/abi/314.html) platform (Python 3.14). Currently only the `tket` package is built. |
 
@@ -79,7 +79,8 @@ and tket instead, select the additional target explicitly:
     target: win_mingw_amd64
 ```
 
-Both MinGW archives use the same compiler provided by the Windows runner.
+Both MinGW archives use the same GCC 14.2.0 distribution pinned by URL and
+SHA-256 in `mingw-toolchain.json`, with POSIX threads, SEH and the MSVCRT runtime.
 They include the GNU runtime DLLs, their licence notices and the compiler's
 build information. Consumers linking C++ libraries should use a compatible
 MinGW toolchain. The `hugrenv.lock` hashes for this target are recorded under
@@ -105,7 +106,8 @@ MinGW toolchain. The `hugrenv.lock` hashes for this target are recorded under
      Docker images to ensure manylinux binary compatibility.
    * macOS targets run natively; `MACOSX_DEPLOYMENT_TARGET` is set to `11.0`.
    * `win_amd64` uses the MSVC toolchain via `ilammy/msvc-dev-cmd`.
-   * `win_mingw_amd64` uses the runner's MinGW GCC installation. Both packages
+   * `win_mingw_amd64` installs the pinned MinGW distribution. Changing the pin
+     rebuilds both packages and invalidates their caches. Both packages
      build and run a small consumer of the installed libraries before archiving
      them, and check that the packaged binaries don't import the MSVC C++ runtime.
    * Each built archive is uploaded as a PR artifact named
@@ -120,6 +122,8 @@ MinGW toolchain. The `hugrenv.lock` hashes for this target are recorded under
    * Downloads all `main-*` promoted artifacts.
    * Generates a `hugrenv.lock` containing the version and Nix-style SHA-256
      hashes for every archive.
+   * Checks that LLVM and tket's MinGW runtime DLLs and compiler build information
+     match before combining them in a release.
    * Creates a GitHub release tagged `v<version>` and attaches all archives
      plus the lock file.
 

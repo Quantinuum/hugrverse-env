@@ -89,6 +89,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Both MinGW archives install runtime files into the same prefix.
+          # Reject older promoted artifacts if they were built with different
+          # runtimes, rather than letting installation order choose a DLL.
+          check_dir=$(mktemp -d)
+          trap 'rm -rf "$check_dir"' EXIT
+          for file in share/mingw/build-info.txt bin/libgcc_s_seh-1.dll bin/libstdc++-6.dll bin/libwinpthread-1.dll; do
+            for dep in llvm tket; do
+              tar -xOf "dist/hugrenv-${dep}-win_mingw_amd64.tar.gz" "hugrverse/${file}" > "$check_dir/$dep"
+            done
+            if ! cmp -s "$check_dir/llvm" "$check_dir/tket"; then
+              echo "MinGW archives disagree on $file; rebuild both targets with the same compiler pin." >&2
+              exit 1
+            fi
+          done
           lockfile="dist/hugrenv.lock";
           echo '{"version":"${{ inputs.version }}", "hashes":{}}' > "$lockfile";
           for artifact in dist/hugrenv-*.tar.gz; do

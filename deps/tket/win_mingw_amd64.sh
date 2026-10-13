@@ -45,6 +45,8 @@ build_install() {
         -DCMAKE_CXX_COMPILER="$(cygpath -m "${CXX}")" \
         -DCMAKE_INSTALL_PREFIX="$(cygpath -m "${INSTALL_PREFIX}")" \
         -DCMAKE_PREFIX_PATH="$(cygpath -m "${INSTALL_PREFIX}")" \
+        -DCMAKE_CXX_STANDARD=14 \
+        -DCMAKE_CXX_STANDARD_REQUIRED=ON \
         -DCMAKE_CXX_FLAGS="-Wa,-mbig-obj" \
         -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
         -DBUILD_SHARED_LIBS=OFF \
