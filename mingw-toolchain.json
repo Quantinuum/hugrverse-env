@@ -1,0 +1,6 @@
+{
+  "version": "14.2.0-rt_v12-rev0",
+  "archive": "x86_64-14.2.0-release-posix-seh-msvcrt-rt_v12-rev0.7z",
+  "url": "https://github.com/niXman/mingw-builds-binaries/releases/download/14.2.0-rt_v12-rev0/x86_64-14.2.0-release-posix-seh-msvcrt-rt_v12-rev0.7z",
+  "sha256": "8afdb7e16253e3d235ea933cb40b2c14d0c9ba334aa668ab9e2eada472a0caef"
+}
