@@ -5,6 +5,16 @@ sandboxed environment that CI uses.
 
 ## Prerequisites
 
+Enter the local development environment before running checks:
+
+```bash
+devenv shell -- bash -c 'shellcheck deps/*/win_mingw_amd64.sh'
+devenv shell -- bash -c 'actionlint -shellcheck=""'
+```
+
+The environment provides ShellCheck, actionlint, jq and Python with PyYAML.
+Native Windows builds still need the Windows toolchains described below.
+
 * [Docker](https://docs.docker.com/get-docker/) installed and running.
 * For AArch64 images on an x86_64 host: Docker with multi-platform support
   (e.g. [QEMU binfmt](https://github.com/multiarch/qemu-user-static) or
@@ -111,6 +121,21 @@ bash deps/tket/win_amd64.sh /tmp/hugrenv-tket-win_amd64.tar.gz
 > The MSVC environment can be loaded in a regular PowerShell session by
 > sourcing
 > `"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"`.
+
+The additional MinGW builds use GCC from `C:/mingw64`, matching the compiler
+provided by GitHub's Windows runner. Run them from Git Bash; they set their
+compiler paths explicitly and don't require the MSVC environment:
+
+```bash
+bash deps/llvm/win_mingw_amd64.sh /tmp/hugrenv-llvm-win_mingw_amd64.tar.gz
+bash deps/tket/win_mingw_amd64.sh /tmp/hugrenv-tket-win_mingw_amd64.tar.gz
+```
+
+Set `MINGW_ROOT` if the same compiler distribution is installed elsewhere.
+Its runtime DLLs, `licenses/` directory and `build-info.txt` must be present.
+The LLVM recipe checks that a MinGW C++ consumer can parse IR using the installed
+LLVM libraries. The tket recipe links and runs a C consumer of the installed
+C API. Both recipes check for unexpected MSVC runtime DLL imports.
 
 ## Emscripten builds
 

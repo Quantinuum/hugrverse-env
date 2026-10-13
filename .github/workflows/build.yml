@@ -54,6 +54,7 @@ jobs:
               macosx_11_0_aarch64)    runs_on="macos-14" ;;
               macosx_11_0_x86_64)     runs_on="macos-15-intel" ;;
               win_amd64)              runs_on="windows-latest" ;;
+              win_mingw_amd64)        runs_on="windows-latest" ;;
               emscripten_wasm32)      runs_on="ubuntu-latest" ;;
               *) echo "Unknown platform: $script_target" >&2; exit 1 ;;
             esac
@@ -105,8 +106,17 @@ jobs:
           key: ${{ matrix.dependency }}-${{ matrix.platform }}-${{ hashFiles(format('deps/{0}/{1}.sh', matrix.dependency, matrix.script_target)) }}
 
       - name: Setup MSVC
-        if: ${{ startsWith(matrix.platform, 'win_') }}
+        if: ${{ matrix.platform == 'win_amd64' }}
         uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Check MinGW toolchain
+        if: ${{ matrix.platform == 'win_mingw_amd64' && steps.cache.outputs.cache-hit != 'true' }}
+        shell: bash
+        run: |
+          test -x /c/mingw64/bin/gcc.exe
+          test -x /c/mingw64/bin/g++.exe
+          test "$(/c/mingw64/bin/gcc.exe -dumpmachine)" = x86_64-w64-mingw32
+          /c/mingw64/bin/gcc.exe --version
 
       - name: Set MACOSX_DEPLOYMENT_TARGET
         if: ${{ startsWith(matrix.platform, 'macosx_') }}
