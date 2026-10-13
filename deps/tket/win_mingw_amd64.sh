@@ -75,7 +75,8 @@ echo "::endgroup::"
 echo "::group::Building tket with MinGW"
 # These two upstream flag blocks assume every Windows compiler is MSVC.
 # Guard the MSVC flags by compiler, while keeping Windows DLL exports enabled.
-sed -i 's/IF (WIN32)/IF (MSVC)/g' "${SRC_DIR}/tket/tket/CMakeLists.txt"
+sed -i '/IF (WIN32)/{N; /CMAKE_CXX_FLAGS/s/IF (WIN32)/IF (MSVC)/;P;D;}' \
+    "${SRC_DIR}/tket/tket/CMakeLists.txt"
 sed -i 's/if (WIN32)/if (MSVC)/g' "${SRC_DIR}/tket/tket-c-api/CMakeLists.txt"
 for library in tklog tkrng tkassert tkwsm tktokenswap; do
     build_install "${SRC_DIR}/tket/libs/${library}"
