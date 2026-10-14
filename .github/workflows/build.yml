@@ -35,6 +35,11 @@ jobs:
             base="${{ github.event.pull_request.base.sha }}"
             head="${{ github.event.pull_request.head.sha }}"
             wanted=$(git diff --name-only "$base" "$head" -- 'deps/*/*.sh' | sort || true)
+            # Both archives carry GNU runtime DLLs. If we change the compiler
+            # pin, rebuild them together so either installation order works.
+            if ! git diff --quiet "$base" "$head" -- mingw-toolchain.json; then
+              wanted=$(printf '%s\n' "$wanted" deps/*/win_mingw_amd64.sh | sort -u)
+            fi
           else
             wanted="$all_scripts"
           fi
@@ -54,6 +59,7 @@ jobs:
               macosx_11_0_aarch64)    runs_on="macos-14" ;;
               macosx_11_0_x86_64)     runs_on="macos-15-intel" ;;
               win_amd64)              runs_on="windows-latest" ;;
+              win_mingw_amd64)        runs_on="windows-latest" ;;
               emscripten_wasm32)      runs_on="ubuntu-latest" ;;
               *) echo "Unknown platform: $script_target" >&2; exit 1 ;;
             esac
@@ -102,11 +108,31 @@ jobs:
         uses: actions/cache@v5
         with:
           path: hugrenv-${{ matrix.dependency }}-${{ matrix.platform }}.tar.gz
-          key: ${{ matrix.dependency }}-${{ matrix.platform }}-${{ hashFiles(format('deps/{0}/{1}.sh', matrix.dependency, matrix.script_target)) }}
+          key: ${{ matrix.dependency }}-${{ matrix.platform }}-${{ hashFiles(format('deps/{0}/{1}.sh', matrix.dependency, matrix.script_target)) }}-${{ matrix.platform == 'win_mingw_amd64' && hashFiles('mingw-toolchain.json') || 'native' }}
 
       - name: Setup MSVC
-        if: ${{ startsWith(matrix.platform, 'win_') }}
+        if: ${{ matrix.platform == 'win_amd64' }}
         uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install pinned MinGW toolchain
+        if: ${{ matrix.platform == 'win_mingw_amd64' && steps.cache.outputs.cache-hit != 'true' }}
+        shell: pwsh
+        run: |
+          $toolchain = Get-Content mingw-toolchain.json -Raw | ConvertFrom-Json
+          $archive = Join-Path $env:RUNNER_TEMP $toolchain.archive
+          $destination = Join-Path $env:RUNNER_TEMP 'hugrenv-mingw'
+          Invoke-WebRequest -Uri $toolchain.url -OutFile $archive
+          $actual = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actual -ne $toolchain.sha256) {
+            throw 'The MinGW distribution does not match its pinned checksum'
+          }
+          & 7z x $archive "-o$destination" -y
+          if ($LASTEXITCODE -ne 0) { throw 'Failed to extract the MinGW distribution' }
+          $mingwRoot = Join-Path $destination 'mingw64'
+          if (!(Test-Path "$mingwRoot/bin/gcc.exe") -or !(Test-Path "$mingwRoot/bin/g++.exe")) {
+            throw 'The MinGW distribution is missing its compilers'
+          }
+          "MINGW_ROOT=$mingwRoot" >> $env:GITHUB_ENV
 
       - name: Set MACOSX_DEPLOYMENT_TARGET
         if: ${{ startsWith(matrix.platform, 'macosx_') }}
