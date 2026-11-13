@@ -1,0 +1,13 @@
+Clear pending diagnostics before their symbol pointers are freed between links.
+Upstream: https://github.com/llvm/llvm-project/issues/233265
+
+--- a/lld/MachO/SymbolTable.cpp
++++ b/lld/MachO/SymbolTable.cpp
+@@ -479,6 +479,7 @@
+       error(message + duplicate.src2.second);
+     }
+   }
++  dupSymDiags.clear();
+ }
+ 
+ // Check whether the definition name def is a mangled function name that matches

@@ -11,6 +11,7 @@ BUILD_DIR="/tmp/llvm-build"
 SOURCE_TARBALL="llvm-project-${LLVM_VERSION}.src.tar.xz"
 SOURCE_DIR="llvm-project-${LLVM_VERSION}.src"
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 OUTPUT_TARBALL="$1"
 
 
@@ -33,6 +34,20 @@ echo "::endgroup::"
 echo "::group::Extracting source"
     if [ ! -d "${SOURCE_DIR}" ]; then
         tar xf "${SOURCE_TARBALL}"
+    fi
+echo "::endgroup::"
+
+
+echo "::group::Patching LLD duplicate-symbol cleanup"
+    # LLD keeps pointers to symbols from the previous link unless we clear its
+    # pending diagnostics. A later in-process link can then read freed memory.
+    # https://github.com/llvm/llvm-project/issues/233265
+    patch_file="${SCRIPT_DIR}/patches/macho-duplicate-symbol-cleanup.patch"
+    source_root="${BUILD_DIR}/${SOURCE_DIR}"
+    if patch -d "${source_root}" -p1 --reverse --forward --dry-run --batch --fuzz=0 < "${patch_file}" > /dev/null 2>&1; then
+        echo "LLD duplicate-symbol cleanup patch is already applied"
+    else
+        patch -d "${source_root}" -p1 --forward --batch --fuzz=0 < "${patch_file}"
     fi
 echo "::endgroup::"
 

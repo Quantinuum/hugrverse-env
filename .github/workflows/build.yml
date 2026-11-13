@@ -40,6 +40,10 @@ jobs:
             if ! git diff --quiet "$base" "$head" -- mingw-toolchain.json; then
               wanted=$(printf '%s\n' "$wanted" deps/*/win_mingw_amd64.sh | sort -u)
             fi
+            # The two macOS LLVM builds apply the same source patches.
+            if ! git diff --quiet "$base" "$head" -- deps/llvm/patches; then
+              wanted=$(printf '%s\n' "$wanted" deps/llvm/macosx_*.sh | sort -u)
+            fi
           else
             wanted="$all_scripts"
           fi
@@ -101,14 +105,14 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # Cache key is per target and per script content.
+      # Cache keys include each target's build script and any source patches.
       # Changing tket/windows does not invalidate llvm/macos.
       - name: Restore cached build
         id: cache
         uses: actions/cache@v5
         with:
           path: hugrenv-${{ matrix.dependency }}-${{ matrix.platform }}.tar.gz
-          key: ${{ matrix.dependency }}-${{ matrix.platform }}-${{ hashFiles(format('deps/{0}/{1}.sh', matrix.dependency, matrix.script_target)) }}-${{ matrix.platform == 'win_mingw_amd64' && hashFiles('mingw-toolchain.json') || 'native' }}
+          key: ${{ matrix.dependency }}-${{ matrix.platform }}-${{ hashFiles(format('deps/{0}/{1}.sh', matrix.dependency, matrix.script_target)) }}-${{ matrix.dependency == 'llvm' && startsWith(matrix.platform, 'macosx_') && hashFiles('deps/llvm/patches/**') || 'unpatched' }}-${{ matrix.platform == 'win_mingw_amd64' && hashFiles('mingw-toolchain.json') || 'native' }}
 
       - name: Setup MSVC
         if: ${{ matrix.platform == 'win_amd64' }}
