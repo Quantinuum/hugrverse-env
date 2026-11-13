@@ -28,7 +28,7 @@ archive.
 |---------------------------|-----------------------------------------------------------------|-------|
 | `manylinux_2_28_x86_64`   | Docker `quay.io/pypa/manylinux_2_28_x86_64` on `ubuntu-latest` | manylinux 2.28 — broad Linux compatibility |
 | `manylinux_2_28_aarch64`  | Docker `quay.io/pypa/manylinux_2_28_aarch64` on `ubuntu-24.04-arm` | manylinux 2.28 — broad Linux compatibility |
-| `macosx_11_0_aarch64`     | `macos-14`                                                      | `MACOSX_DEPLOYMENT_TARGET=11.0` |
+| `macosx_11_0_aarch64`     | `macos-15`                                                      | `MACOSX_DEPLOYMENT_TARGET=11.0` |
 | `macosx_11_0_x86_64`      | `macos-15-intel`                                                | `MACOSX_DEPLOYMENT_TARGET=11.0` |
 | `win_amd64`               | `windows-latest` + MSVC                                         | |
 | `win_mingw_amd64`         | `windows-latest` + pinned MinGW GCC 14.2.0                       | Separate GNU ABI builds of LLVM and tket, including their MinGW runtime DLLs |
