@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TAG_TKET="2.16.0"
+TAG_TKET="2.18.5"
 TAG_BOOST="1.90.0"
 TAG_SYMENGINE="v0.14.0"
 TAG_EIGEN="5.0.1"
