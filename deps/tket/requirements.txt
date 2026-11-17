@@ -1,0 +1,3 @@
+# We use pytket's release number to select the tket source tag. Dependabot
+# updates this pin, and every tket build script reads it directly.
+pytket==2.18.5

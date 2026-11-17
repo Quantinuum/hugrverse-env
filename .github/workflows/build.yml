@@ -35,6 +35,11 @@ jobs:
             base="${{ github.event.pull_request.base.sha }}"
             head="${{ github.event.pull_request.head.sha }}"
             wanted=$(git diff --name-only "$base" "$head" -- 'deps/*/*.sh' | sort || true)
+            # Dependabot updates the shared pytket pin. Every tket archive
+            # uses that source version, so we need to rebuild all its targets.
+            if ! git diff --quiet "$base" "$head" -- deps/tket/requirements.txt; then
+              wanted=$(printf '%s\n' "$wanted" deps/tket/*.sh | sort -u)
+            fi
             # Both archives carry GNU runtime DLLs. If we change the compiler
             # pin, rebuild them together so either installation order works.
             if ! git diff --quiet "$base" "$head" -- mingw-toolchain.json; then
@@ -105,14 +110,14 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # Cache keys include each target's build script and any source patches.
+      # Cache keys include each target's build script, version pin and patches.
       # Changing tket/windows does not invalidate llvm/macos.
       - name: Restore cached build
         id: cache
         uses: actions/cache@v5
         with:
           path: hugrenv-${{ matrix.dependency }}-${{ matrix.platform }}.tar.gz
-          key: ${{ matrix.dependency }}-${{ matrix.platform }}-${{ hashFiles(format('deps/{0}/{1}.sh', matrix.dependency, matrix.script_target)) }}-${{ matrix.dependency == 'llvm' && startsWith(matrix.platform, 'macosx_') && hashFiles('deps/llvm/patches/**') || 'unpatched' }}-${{ matrix.platform == 'win_mingw_amd64' && hashFiles('mingw-toolchain.json') || 'native' }}
+          key: ${{ matrix.dependency }}-${{ matrix.platform }}-${{ hashFiles(format('deps/{0}/{1}.sh', matrix.dependency, matrix.script_target), format('deps/{0}/requirements.txt', matrix.dependency)) }}-${{ matrix.dependency == 'llvm' && startsWith(matrix.platform, 'macosx_') && hashFiles('deps/llvm/patches/**') || 'unpatched' }}-${{ matrix.platform == 'win_mingw_amd64' && hashFiles('mingw-toolchain.json') || 'native' }}
 
       - name: Setup MSVC
         if: ${{ matrix.platform == 'win_amd64' }}

@@ -1,6 +1,7 @@
 set -evu
 
-TAG_TKET="2.18.5"
+TAG_TKET="$(sed -n 's/^pytket==//p' "$(dirname "${BASH_SOURCE[0]}")/requirements.txt" | tr -d '\r')"
+: "${TAG_TKET:?requirements.txt must pin pytket with ==}"
 TAG_BOOST="1.90.0"
 TAG_SYMENGINE="v0.14.0"
 TAG_EIGEN="5.0.1"
