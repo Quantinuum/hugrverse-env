@@ -20,7 +20,7 @@ archive.
 | Component | Version | Description |
 |-----------|---------|-------------|
 | LLVM      | 21.1.8  | Clang + LLD + LLVM core libraries |
-| tket      | 2.16.0  | Quantinuum tket quantum compiler + C API |
+| tket      | 2.18.5  | Quantinuum tket quantum compiler + C API |
 
 ## Supported platforms
 
