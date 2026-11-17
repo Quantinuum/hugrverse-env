@@ -20,7 +20,7 @@ archive.
 | Component | Version | Description |
 |-----------|---------|-------------|
 | LLVM      | 21.1.8  | Clang + LLD + LLVM core libraries |
-| tket      | 2.18.5  | Quantinuum tket quantum compiler + C API |
+| tket      | [pytket release pin](deps/tket/requirements.txt) | Quantinuum tket quantum compiler + C API |
 
 ## Supported platforms
 
@@ -99,7 +99,8 @@ MinGW toolchain. The `hugrenv.lock` hashes for this target are recorded under
 
 1. **Build** (`build.yml`) — triggered on pull requests and manually via
    `workflow_dispatch`.
-   * On a PR, only scripts that changed since the base commit are built.
+   * On a PR, changed build scripts and targets affected by shared version pins
+     or patches are built.
    * A manual run rebuilds every target. After it succeeds, `merge.yml`
      automatically promotes the fresh artifacts for the next release.
    * Linux targets are built inside the official `quay.io/pypa/manylinux_2_28_*`
@@ -126,6 +127,23 @@ MinGW toolchain. The `hugrenv.lock` hashes for this target are recorded under
      match before combining them in a release.
    * Creates a GitHub release tagged `v<version>` and attaches all archives
      plus the lock file.
+
+## Updating tket
+
+Dependabot checks PyPI daily for new pytket releases and opens a PR updating
+`deps/tket/requirements.txt`. Every tket recipe reads this pin to select the
+matching source tag. A pin change rebuilds all eight tket targets and invalidates
+their build caches, so the PR checks compatibility across every platform.
+Review and merge the PR once the builds pass; artifact promotion and publishing
+then follow the existing merge and release workflows.
+
+If a build fails, use the PR and its logs to investigate changes in upstream's
+dependency requirements and our platform recipes. A human can hand that work
+to an AI agent as needed.
+
+The requirements file tracks the source version; the recipes build tket from
+source without installing pytket. LLVM remains pinned in its build scripts and
+isn't included in the Dependabot configuration.
 
 ## Adding a new dependency
 
