@@ -106,17 +106,12 @@ runs:
       shell: bash
       run: |
         packages="${{ inputs.packages }}";
-        # Git Bash provides sha256sum. Use shasum on hosts without it.
-        checksum=(sha256sum -b);
-        if ! command -v sha256sum >/dev/null 2>&1; then
-          checksum=(shasum -a 256 -b);
-        fi;
         echo "Downloading hugrenv version ${HUGRENV_VERSION} for target ${HUGRENV_TARGET} with packages $packages to ${HUGRENV_PATH}";
         mkdir -p $HUGRENV_PATH;
         for package in ${packages//,/ }; do
           echo "Downloading package $package";
           url="https://github.com/Quantinuum/hugrverse-env/releases/download/v${HUGRENV_VERSION}/hugrenv-${package}-${HUGRENV_TARGET}.tar.gz";
-          curl -L "$url" | tee >("${checksum[@]}" >&2) | tar -xzf - -C ${HUGRENV_PATH} --strip-components=1;
+          curl -L "$url" | tar -xzf - -C ${HUGRENV_PATH} --strip-components=1;
         done;
 
     - name: Set environment variables
